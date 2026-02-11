@@ -6,8 +6,10 @@ import {
   ProgressLabel,
   ProgressValue,
 } from "@/components/ui/progress";
+import { connection } from "next/server";
 
 export default async function Page() {
+  await connection();
   const items = await getLotteryItems();
 
   return (
