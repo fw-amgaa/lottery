@@ -29,7 +29,7 @@ const data = {
   user: {
     name: "admin",
     email: "bbolorchuluun065@gmail.com",
-    avatar: "/logo.jpg",
+    avatar: "/logo.png",
   },
   teams: [
     {

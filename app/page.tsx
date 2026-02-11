@@ -18,13 +18,7 @@ export default async function Page() {
       <header className="sticky top-0 z-50 border-b border-white/5 bg-[#0a0a0a]/80 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
           <Link href="/" className="flex items-center gap-3">
-            <Image
-              src="/logo.jpg"
-              alt="Азтай Монгол"
-              width={36}
-              height={36}
-              className="rounded-full"
-            />
+            <Image src="/logo.png" alt="Азтай Монгол" width={36} height={36} />
             <span className="text-sm font-semibold tracking-tight">
               Азтай Монгол
             </span>
@@ -48,12 +42,12 @@ export default async function Page() {
         {/* bg glow */}
         <div className="pointer-events-none absolute top-1/2 left-1/2 -z-10 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-500/10 blur-[160px]" />
 
-        <div className="relative mb-8 h-32 w-32 sm:h-40 sm:w-40">
+        <div className="relative mb-8 h-40 w-32 sm:h-48 sm:w-40">
           <Image
-            src="/logo.jpg"
+            src="/logo.png"
             alt="Азтай Монгол Сугалаа"
             fill
-            className="rounded-3xl object-cover shadow-2xl shadow-amber-900/30 ring-1 ring-white/10"
+            className="object-contain"
             priority
           />
         </div>
@@ -123,9 +117,7 @@ export default async function Page() {
             {items.map((item) => {
               const pct =
                 item.total_tickets > 0
-                  ? Math.round(
-                      (item.sold_tickets / item.total_tickets) * 100,
-                    )
+                  ? Math.round((item.sold_tickets / item.total_tickets) * 100)
                   : 0;
               const remaining = item.total_tickets - item.sold_tickets;
 
@@ -303,8 +295,8 @@ export default async function Page() {
                     тэгэхгүй бол тасалбар баталгаажихгүй.
                   </li>
                   <li>
-                    Нэг удаагийн шилжүүлгээр олон тасалбар авах бол үнийн
-                    дүнг тасалбарын тоогоор үржүүлнэ үү.
+                    Нэг удаагийн шилжүүлгээр олон тасалбар авах бол үнийн дүнг
+                    тасалбарын тоогоор үржүүлнэ үү.
                   </li>
                   <li>
                     Хожлын сугалаа Facebook хуудсаар LIVE дамжуулан явагдана.
@@ -350,7 +342,8 @@ export default async function Page() {
               <p className="text-sm leading-relaxed text-white/40">
                 Сугалаанд оролцохын тулд заасан дансруу тасалбарын үнийн дүнг
                 шилжүүлж, гүйлгээний утганд утасны дугаараа бичнэ. Тасалбар
-                батлагдсан тохиолдолд Google Sheet дээр таны мэдээлэл бүртгэгдэнэ.
+                батлагдсан тохиолдолд Google Sheet дээр таны мэдээлэл
+                бүртгэгдэнэ.
               </p>
             </div>
 
@@ -388,7 +381,7 @@ export default async function Page() {
           <div className="flex flex-col items-center gap-6 sm:flex-row sm:justify-between">
             <div className="flex items-center gap-3">
               <Image
-                src="/logo.jpg"
+                src="/logo.png"
                 alt="Азтай Монгол"
                 width={28}
                 height={28}
@@ -401,12 +394,12 @@ export default async function Page() {
 
             <div className="text-center text-xs leading-relaxed text-white/25 sm:text-right">
               <p>
-                &copy; {new Date().getFullYear()} Азтай Монгол. Бүх эрх
-                хуулиар хамгаалагдсан.
+                &copy; {new Date().getFullYear()} Азтай Монгол. Бүх эрх хуулиар
+                хамгаалагдсан.
               </p>
               <p className="mt-1">
-                Энэхүү вэбсайт нь Монгол Улсын хуулийн дагуу сугалааны
-                үйл ажиллагаа эрхлэх албан ёсны зөвшөөрөлтэй.
+                Энэхүү вэбсайт нь Монгол Улсын хуулийн дагуу сугалааны үйл
+                ажиллагаа эрхлэх албан ёсны зөвшөөрөлтэй.
               </p>
             </div>
           </div>

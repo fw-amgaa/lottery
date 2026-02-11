@@ -133,7 +133,7 @@ export function LoginForm({
           </form>
           <div className="bg-muted relative hidden md:block">
             <Image
-              src="/logo.jpg"
+              src="/logo.png"
               alt="Image"
               fill
               className="absolute inset-0 h-full w-full object-cover"
