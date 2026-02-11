@@ -55,7 +55,7 @@ export default function LotteryItemDialog({
     const data = {
       name: formData.get("name") as string,
       price: Number(formData.get("price")),
-      bank_account_number: formData.get("bank_account_number") as string,
+      bank_account_number: `MN${(formData.get("bank_account_number") as string).replace(/^MN/i, "")}`,
       total_tickets: Number(formData.get("total_tickets")),
       sold_tickets: Number(formData.get("sold_tickets") || 0),
       google_sheet_url: (formData.get("google_sheet_url") as string)
@@ -182,7 +182,10 @@ export default function LotteryItemDialog({
                   id="bank_account_number"
                   name="bank_account_number"
                   placeholder="25 0015 00 12345678"
-                  defaultValue={selectedItem?.bank_account_number ?? ""}
+                  defaultValue={selectedItem?.bank_account_number?.replace(/^MN/i, "") ?? ""}
+                  onChange={(e) => {
+                    e.target.value = e.target.value.replace(/^MN/i, "");
+                  }}
                   required
                 />
                 <InputGroupAddon>
