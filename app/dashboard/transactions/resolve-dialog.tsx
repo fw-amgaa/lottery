@@ -94,7 +94,7 @@ export default function ResolveDialog({ txn, lotteries, onClose }: Props) {
             <>
               <Field>
                 <FieldLabel>Assign to lottery</FieldLabel>
-                <Select value={lotteryId} onValueChange={setLotteryId}>
+                <Select value={lotteryId} onValueChange={(v) => setLotteryId(v ?? "")}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select lottery..." />
                   </SelectTrigger>
