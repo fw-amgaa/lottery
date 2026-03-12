@@ -11,6 +11,8 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { Button } from "./ui/button";
 import LotteryItemDialog from "@/app/dashboard/lottery-items/dialog";
 import React from "react";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 export function NavProjects({
   projects,
@@ -22,6 +24,7 @@ export function NavProjects({
   }[];
 }) {
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+  const pathname = usePathname();
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <LotteryItemDialog
@@ -36,7 +39,10 @@ export function NavProjects({
         </Button>
         {projects.map((item) => (
           <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton render={<a href={item.url} />}>
+            <SidebarMenuButton
+              isActive={pathname === item.url}
+              render={<Link href={item.url} />}
+            >
               {item.icon}
               <span>{item.name}</span>
             </SidebarMenuButton>

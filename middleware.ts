@@ -7,7 +7,7 @@ export default async function middleware(request: NextRequest) {
   const isLoginPage = request.nextUrl.pathname === "/login";
 
   if (isLoginPage && sessionCookie) {
-    return NextResponse.redirect(new URL("/dashboard/lottery-items", request.url));
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   if (!isLoginPage && !sessionCookie) {

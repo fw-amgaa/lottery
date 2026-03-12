@@ -133,6 +133,11 @@ export default function LotteryItemsList({ items }: { items: LotteryItem[] }) {
 
             <CardHeader>
               <CardTitle>{item.name}</CardTitle>
+              {item.code && (
+                <Badge variant="outline" className="font-mono w-fit">
+                  {item.code}
+                </Badge>
+              )}
               <CardDescription>
                 {item.sold_tickets} / {item.total_tickets} tickets sold
               </CardDescription>

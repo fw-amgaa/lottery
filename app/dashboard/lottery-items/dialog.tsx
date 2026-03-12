@@ -55,7 +55,6 @@ export default function LotteryItemDialog({
     const data = {
       name: formData.get("name") as string,
       price: Number(formData.get("price")),
-      bank_account_number: `MN${(formData.get("bank_account_number") as string).replace(/^MN/i, "")}`,
       total_tickets: Number(formData.get("total_tickets")),
       sold_tickets: Number(formData.get("sold_tickets") || 0),
       google_sheet_url: (formData.get("google_sheet_url") as string)
@@ -91,7 +90,9 @@ export default function LotteryItemDialog({
             {isEditing ? "Edit Lottery Item" : "Create Lottery Item"}
           </AlertDialogTitle>
           <AlertDialogDescription>
-            Please fill in details below
+            {isEditing && selectedItem.code
+              ? `Lottery code: ${selectedItem.code} — customers send to this code`
+              : "A unique lottery code will be auto-generated"}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <form onSubmit={handleSubmit}>
@@ -138,12 +139,12 @@ export default function LotteryItemDialog({
                 />
               </Field>
               <Field>
-                <FieldLabel htmlFor="price">Price</FieldLabel>
+                <FieldLabel htmlFor="price">Price (₮)</FieldLabel>
                 <Input
                   id="price"
                   name="price"
                   type="number"
-                  placeholder="50000"
+                  placeholder="10000"
                   defaultValue={selectedItem?.price ?? ""}
                   required
                 />
@@ -173,30 +174,9 @@ export default function LotteryItemDialog({
                 />
               </Field>
             </div>
+
             <Field>
-              <FieldLabel htmlFor="bank_account_number">
-                Bank Account Number
-              </FieldLabel>
-              <InputGroup>
-                <InputGroupInput
-                  id="bank_account_number"
-                  name="bank_account_number"
-                  placeholder="25 0015 00 12345678"
-                  defaultValue={selectedItem?.bank_account_number?.replace(/^MN/i, "") ?? ""}
-                  onChange={(e) => {
-                    e.target.value = e.target.value.replace(/^MN/i, "");
-                  }}
-                  required
-                />
-                <InputGroupAddon>
-                  <InputGroupText>MN</InputGroupText>
-                </InputGroupAddon>
-              </InputGroup>
-            </Field>
-            <Field>
-              <FieldLabel htmlFor="google_sheet_url">
-                Google Sheet Url
-              </FieldLabel>
+              <FieldLabel htmlFor="google_sheet_url">Google Sheet Url</FieldLabel>
               <InputGroup>
                 <InputGroupInput
                   id="google_sheet_url"

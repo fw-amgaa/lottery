@@ -127,20 +127,25 @@ const data = {
   ],
   projects: [
     {
-      name: "Lottery items",
+      name: "Overview",
+      url: "/dashboard",
+      icon: <HugeiconsIcon icon={LayoutBottomIcon} strokeWidth={2} />,
+    },
+    {
+      name: "Lottery Items",
       url: "/dashboard/lottery-items",
       icon: <HugeiconsIcon icon={CropIcon} strokeWidth={2} />,
     },
-    // {
-    //   name: "Sales & Marketing",
-    //   url: "#",
-    //   icon: <HugeiconsIcon icon={PieChartIcon} strokeWidth={2} />,
-    // },
-    // {
-    //   name: "Travel",
-    //   url: "#",
-    //   icon: <HugeiconsIcon icon={MapsIcon} strokeWidth={2} />,
-    // },
+    {
+      name: "Transactions",
+      url: "/dashboard/transactions",
+      icon: <HugeiconsIcon icon={ComputerTerminalIcon} strokeWidth={2} />,
+    },
+    {
+      name: "Purchases",
+      url: "/dashboard/purchases",
+      icon: <HugeiconsIcon icon={PlusSignCircleIcon} strokeWidth={2} />,
+    },
   ],
 };
 
