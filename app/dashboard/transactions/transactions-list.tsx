@@ -7,19 +7,28 @@ import type { BankTransactionWithLottery } from "@/lib/bank-transactions";
 import type { LotteryItem } from "@/lib/lottery-items";
 import ResolveDialog from "./resolve-dialog";
 
-const STATUS_BADGE: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
+const STATUS_BADGE: Record<
+  string,
+  {
+    label: string;
+    variant: "default" | "secondary" | "destructive" | "outline";
+  }
+> = {
   completed: { label: "Амжилттай", variant: "default" },
   warning: { label: "Анхааруулга", variant: "secondary" },
-  oversold: { label: "Хэтэрхий зарагдсан", variant: "secondary" },
-  unmatched: { label: "Таарсангүй", variant: "outline" },
-  insufficient: { label: "Хүрэлцэхгүй", variant: "outline" },
+  oversold: { label: "Сугалааны тоо хэтэрсэн", variant: "secondary" },
+  unmatched: { label: "Амжилтгүй", variant: "outline" },
+  insufficient: { label: "Дүн хүрэлцэхгүй", variant: "outline" },
   error: { label: "Алдаа", variant: "destructive" },
 };
 
 const PAGE_SIZE = 20;
 
 function formatDate(date: Date | string) {
-  return new Date(date).toLocaleString("mn-MN", { timeZone: "Asia/Ulaanbaatar" });
+  return new Date(date).toLocaleString("mn-MN", {
+    timeZone: "Asia/Ulaanbaatar",
+    hour12: false,
+  });
 }
 
 interface Props {
@@ -28,11 +37,15 @@ interface Props {
 }
 
 export default function TransactionsList({ transactions, lotteries }: Props) {
-  const [resolving, setResolving] = React.useState<BankTransactionWithLottery | null>(null);
+  const [resolving, setResolving] =
+    React.useState<BankTransactionWithLottery | null>(null);
   const [filter, setFilter] = React.useState<string>("all");
   const [page, setPage] = React.useState(1);
 
-  const filtered = filter === "all" ? transactions : transactions.filter((t) => t.status === filter);
+  const filtered =
+    filter === "all"
+      ? transactions
+      : transactions.filter((t) => t.status === filter);
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
@@ -44,16 +57,26 @@ export default function TransactionsList({ transactions, lotteries }: Props) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex gap-2 flex-wrap">
-        {["all", "completed", "warning", "oversold", "unmatched", "insufficient", "error"].map((s) => (
+        {[
+          "all",
+          "completed",
+          "warning",
+          "oversold",
+          "unmatched",
+          "insufficient",
+          "error",
+        ].map((s) => (
           <Button
             key={s}
             variant={filter === s ? "default" : "outline"}
             size="sm"
             onClick={() => handleFilter(s)}
           >
-            {s === "all" ? "Бүгд" : STATUS_BADGE[s]?.label ?? s}
+            {s === "all" ? "Бүгд" : (STATUS_BADGE[s]?.label ?? s)}
             <Badge variant="secondary" className="ml-1">
-              {s === "all" ? transactions.length : transactions.filter((t) => t.status === s).length}
+              {s === "all"
+                ? transactions.length
+                : transactions.filter((t) => t.status === s).length}
             </Badge>
           </Button>
         ))}
@@ -76,14 +99,25 @@ export default function TransactionsList({ transactions, lotteries }: Props) {
           <tbody>
             {paginated.length === 0 && (
               <tr>
-                <td colSpan={8} className="text-center py-8 text-muted-foreground">
+                <td
+                  colSpan={8}
+                  className="text-center py-8 text-muted-foreground"
+                >
                   Гүйлгээ байхгүй
                 </td>
               </tr>
             )}
             {paginated.map((txn) => {
               const isResolved = !!txn.resolved_at;
-              const needsAction = !isResolved && ["warning", "oversold", "unmatched", "insufficient", "error"].includes(txn.status);
+              const needsAction =
+                !isResolved &&
+                [
+                  "warning",
+                  "oversold",
+                  "unmatched",
+                  "insufficient",
+                  "error",
+                ].includes(txn.status);
               const badge = STATUS_BADGE[txn.status];
               return (
                 <tr key={txn.id} className="border-t hover:bg-muted/30">
@@ -93,26 +127,41 @@ export default function TransactionsList({ transactions, lotteries }: Props) {
                   <td className="px-4 py-2 font-medium whitespace-nowrap">
                     {txn.amount.toLocaleString()}₮
                   </td>
-                  <td className="px-4 py-2 whitespace-nowrap text-muted-foreground max-w-[200px] truncate" title={txn.txn_desc}>
+                  <td
+                    className="px-4 py-2 whitespace-nowrap text-muted-foreground max-w-[200px] truncate"
+                    title={txn.txn_desc}
+                  >
                     {txn.txn_desc}
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap">
-                    {txn.parsed_phone ?? <span className="text-muted-foreground">—</span>}
+                    {txn.parsed_phone ?? (
+                      <span className="text-muted-foreground">—</span>
+                    )}
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap">
-                    {txn.lottery_name ?? <span className="text-muted-foreground">—</span>}
+                    {txn.lottery_name ?? (
+                      <span className="text-muted-foreground">—</span>
+                    )}
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap">
-                    {txn.ticket_count ?? <span className="text-muted-foreground">—</span>}
+                    {txn.ticket_count ?? (
+                      <span className="text-muted-foreground">—</span>
+                    )}
                   </td>
                   <td className="px-4 py-2">
                     <Badge variant={badge?.variant ?? "secondary"}>
-                      {isResolved && txn.status !== "completed" ? "Шийдвэрлэгдсэн" : badge?.label ?? txn.status}
+                      {isResolved && txn.status !== "completed"
+                        ? "Шийдвэрлэгдсэн"
+                        : (badge?.label ?? txn.status)}
                     </Badge>
                   </td>
                   <td className="px-4 py-2">
                     {needsAction && (
-                      <Button size="sm" variant="outline" onClick={() => setResolving(txn)}>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setResolving(txn)}
+                      >
                         Шийдвэрлэх
                       </Button>
                     )}
@@ -126,12 +175,24 @@ export default function TransactionsList({ transactions, lotteries }: Props) {
 
       {totalPages > 1 && (
         <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <span>{filtered.length} гүйлгээ · {page} / {totalPages} хуудас</span>
+          <span>
+            {filtered.length} гүйлгээ · {page} / {totalPages} хуудас
+          </span>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => setPage(p => p - 1)} disabled={page === 1}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage((p) => p - 1)}
+              disabled={page === 1}
+            >
               Өмнөх
             </Button>
-            <Button variant="outline" size="sm" onClick={() => setPage(p => p + 1)} disabled={page === totalPages}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage((p) => p + 1)}
+              disabled={page === totalPages}
+            >
               Дараах
             </Button>
           </div>

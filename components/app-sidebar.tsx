@@ -142,7 +142,7 @@ const data = {
       icon: <HugeiconsIcon icon={ComputerTerminalIcon} strokeWidth={2} />,
     },
     {
-      name: "Авалтууд",
+      name: "Худалдан авалтууд",
       url: "/dashboard/purchases",
       icon: <HugeiconsIcon icon={PlusSignCircleIcon} strokeWidth={2} />,
     },

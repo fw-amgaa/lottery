@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 const PAGE_SIZE = 20;
 
 function formatDate(date: Date | string) {
-  return new Date(date).toLocaleString("mn-MN", { timeZone: "Asia/Ulaanbaatar" });
+  return new Date(date).toLocaleString("mn-MN", { timeZone: "Asia/Ulaanbaatar", hour12: false });
 }
 
 interface Purchase {

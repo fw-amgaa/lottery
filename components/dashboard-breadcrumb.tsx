@@ -14,7 +14,7 @@ const LABELS: Record<string, string> = {
   "/dashboard": "Хяналт",
   "/dashboard/lottery-items": "Сугалаанууд",
   "/dashboard/transactions": "Гүйлгээнүүд",
-  "/dashboard/purchases": "Авалтууд",
+  "/dashboard/purchases": "Худалдан авалтууд",
 };
 
 export default function DashboardBreadcrumb() {

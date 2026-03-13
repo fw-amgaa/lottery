@@ -14,7 +14,9 @@ export default async function PurchasesPage() {
     <div className="flex flex-col gap-4 p-4 pt-0">
       <div>
         <h1 className="text-xl font-semibold">Худалдан авалт</h1>
-        <p className="text-muted-foreground text-sm">Амжилттай бүртгэгдсэн тасалбарын авалтууд</p>
+        <p className="text-muted-foreground text-sm">
+          Амжилттай бүртгэгдсэн тасалбарын худалдан авалтууд
+        </p>
       </div>
       <PurchasesList purchases={result.rows} />
     </div>

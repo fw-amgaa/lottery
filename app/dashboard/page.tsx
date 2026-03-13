@@ -1,14 +1,24 @@
 import { pool } from "@/lib/db";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import type { BankTransactionWithLottery } from "@/lib/bank-transactions";
+
+type RecentPurchase = {
+  id: string;
+  txn_date: Date;
+  lottery_name: string;
+  phone_number: string;
+  amount: number;
+  ticket_count: number;
+};
 
 export default async function DashboardPage() {
   const today = new Date().toISOString().split("T")[0];
 
   const [statsResult, flaggedResult, recentResult] = await Promise.all([
-    pool.query(`
+    pool.query(
+      `
       SELECT
         COUNT(*) FILTER (WHERE status = 'completed' OR status = 'warning') AS total_purchases,
         COALESCE(SUM(amount) FILTER (WHERE status = 'completed' OR status = 'warning'), 0) AS total_revenue,
@@ -16,7 +26,9 @@ export default async function DashboardPage() {
         COUNT(*) FILTER (WHERE DATE(txn_date) = $1 AND (status = 'completed' OR status = 'warning')) AS today_purchases,
         COALESCE(SUM(amount) FILTER (WHERE DATE(txn_date) = $1 AND (status = 'completed' OR status = 'warning')), 0) AS today_revenue
       FROM bank_transactions
-    `, [today]),
+    `,
+      [today],
+    ),
     pool.query(`
       SELECT bt.*, li.name AS lottery_name, p.ticket_count
       FROM bank_transactions bt
@@ -51,15 +63,21 @@ export default async function DashboardPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Өнөөдрийн орлого</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Өнөөдрийн орлого
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">{Number(stats.today_revenue).toLocaleString()}₮</p>
+            <p className="text-2xl font-bold">
+              {Number(stats.today_revenue).toLocaleString()}₮
+            </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Өнөөдрийн авалт</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Өнөөдрийн авалт
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">{stats.today_purchases}</p>
@@ -67,18 +85,26 @@ export default async function DashboardPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Нийт орлого</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Нийт орлого
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">{Number(stats.total_revenue).toLocaleString()}₮</p>
+            <p className="text-2xl font-bold">
+              {Number(stats.total_revenue).toLocaleString()}₮
+            </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Шалгах шаардлагатай</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Шалгах шаардлагатай
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold text-destructive">{stats.flagged_count}</p>
+            <p className="text-2xl font-bold text-destructive">
+              {stats.flagged_count}
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -87,9 +113,13 @@ export default async function DashboardPage() {
       {flagged.length > 0 && (
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between">
-            <h2 className="font-semibold">Шалгах шаардлагатай ({flagged.length})</h2>
+            <h2 className="font-semibold">
+              Шалгах шаардлагатай ({flagged.length})
+            </h2>
             <Link href="/dashboard/transactions">
-              <Button variant="outline" size="sm">Бүх гүйлгээ</Button>
+              <Button variant="outline" size="sm">
+                Бүх гүйлгээ
+              </Button>
             </Link>
           </div>
           <div className="rounded-lg border overflow-auto">
@@ -104,23 +134,35 @@ export default async function DashboardPage() {
                 </tr>
               </thead>
               <tbody>
-                {flagged.map((txn: any) => (
+                {flagged.map((txn: BankTransactionWithLottery) => (
                   <tr key={txn.id} className="border-t hover:bg-muted/30">
                     <td className="px-4 py-2 whitespace-nowrap text-muted-foreground">
-                      {new Date(txn.txn_date).toLocaleString("mn-MN", { timeZone: "Asia/Ulaanbaatar" })}
+                      {new Date(txn.txn_date).toLocaleString("mn-MN", {
+                        timeZone: "Asia/Ulaanbaatar",
+                        hour12: false,
+                      })}
                     </td>
-                    <td className="px-4 py-2 font-medium">{Number(txn.amount).toLocaleString()}₮</td>
-                    <td className="px-4 py-2 max-w-[200px] truncate text-muted-foreground" title={txn.txn_desc}>
+                    <td className="px-4 py-2 font-medium">
+                      {Number(txn.amount).toLocaleString()}₮
+                    </td>
+                    <td
+                      className="px-4 py-2 max-w-[200px] truncate text-muted-foreground"
+                      title={txn.txn_desc}
+                    >
                       {txn.txn_desc}
                     </td>
                     <td className="px-4 py-2">
-                      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_BADGE[txn.status] ?? ""}`}>
+                      <span
+                        className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_BADGE[txn.status] ?? ""}`}
+                      >
                         {txn.status}
                       </span>
                     </td>
                     <td className="px-4 py-2">
                       <Link href="/dashboard/transactions">
-                        <Button size="sm" variant="outline">Шийдвэрлэх</Button>
+                        <Button size="sm" variant="outline">
+                          Шийдвэрлэх
+                        </Button>
                       </Link>
                     </td>
                   </tr>
@@ -134,9 +176,11 @@ export default async function DashboardPage() {
       {/* Recent purchases */}
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <h2 className="font-semibold">Сүүлийн авалтууд</h2>
+          <h2 className="font-semibold">Сүүлийн худалдан авалтууд</h2>
           <Link href="/dashboard/purchases">
-            <Button variant="outline" size="sm">Бүгдийг харах</Button>
+            <Button variant="outline" size="sm">
+              Бүгдийг харах
+            </Button>
           </Link>
         </div>
         <div className="rounded-lg border overflow-auto">
@@ -152,16 +196,28 @@ export default async function DashboardPage() {
             </thead>
             <tbody>
               {recent.length === 0 && (
-                <tr><td colSpan={5} className="text-center py-6 text-muted-foreground">Худалдан авалт байхгүй</td></tr>
+                <tr>
+                  <td
+                    colSpan={5}
+                    className="text-center py-6 text-muted-foreground"
+                  >
+                    Худалдан авалт байхгүй
+                  </td>
+                </tr>
               )}
-              {recent.map((p: any) => (
+              {recent.map((p: RecentPurchase) => (
                 <tr key={p.id} className="border-t hover:bg-muted/30">
                   <td className="px-4 py-2 whitespace-nowrap text-muted-foreground">
-                    {new Date(p.txn_date).toLocaleString("mn-MN", { timeZone: "Asia/Ulaanbaatar" })}
+                    {new Date(p.txn_date).toLocaleString("mn-MN", {
+                      timeZone: "Asia/Ulaanbaatar",
+                      hour12: false,
+                    })}
                   </td>
                   <td className="px-4 py-2">{p.lottery_name}</td>
                   <td className="px-4 py-2">{p.phone_number}</td>
-                  <td className="px-4 py-2 font-medium">{Number(p.amount).toLocaleString()}₮</td>
+                  <td className="px-4 py-2 font-medium">
+                    {Number(p.amount).toLocaleString()}₮
+                  </td>
                   <td className="px-4 py-2 font-semibold">{p.ticket_count}</td>
                 </tr>
               ))}
