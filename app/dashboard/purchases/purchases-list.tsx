@@ -31,18 +31,18 @@ export default function PurchasesList({ purchases }: { purchases: Purchase[] }) 
         <table className="min-w-max w-full text-sm">
           <thead className="bg-muted/50">
             <tr>
-              <th className="text-left px-4 py-2 font-medium">Date (UTC+8)</th>
-              <th className="text-left px-4 py-2 font-medium">Lottery</th>
-              <th className="text-left px-4 py-2 font-medium">Code</th>
-              <th className="text-left px-4 py-2 font-medium">Phone</th>
-              <th className="text-left px-4 py-2 font-medium">Amount</th>
-              <th className="text-left px-4 py-2 font-medium">Tickets</th>
+              <th className="text-left px-4 py-2 font-medium">Огноо (UTC+8)</th>
+              <th className="text-left px-4 py-2 font-medium">Сугалаа</th>
+              <th className="text-left px-4 py-2 font-medium">Код</th>
+              <th className="text-left px-4 py-2 font-medium">Утас</th>
+              <th className="text-left px-4 py-2 font-medium">Дүн</th>
+              <th className="text-left px-4 py-2 font-medium">Тасалбар</th>
             </tr>
           </thead>
           <tbody>
             {paginated.length === 0 && (
               <tr>
-                <td colSpan={6} className="text-center py-8 text-muted-foreground">No purchases yet</td>
+                <td colSpan={6} className="text-center py-8 text-muted-foreground">Худалдан авалт байхгүй</td>
               </tr>
             )}
             {paginated.map((p) => (
@@ -65,13 +65,13 @@ export default function PurchasesList({ purchases }: { purchases: Purchase[] }) 
 
       {totalPages > 1 && (
         <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <span>{purchases.length} purchases · page {page} of {totalPages}</span>
+          <span>{purchases.length} авалт · {page} / {totalPages} хуудас</span>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={() => setPage(p => p - 1)} disabled={page === 1}>
-              Previous
+              Өмнөх
             </Button>
             <Button variant="outline" size="sm" onClick={() => setPage(p => p + 1)} disabled={page === totalPages}>
-              Next
+              Дараах
             </Button>
           </div>
         </div>

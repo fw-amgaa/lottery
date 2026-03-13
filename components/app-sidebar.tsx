@@ -127,22 +127,22 @@ const data = {
   ],
   projects: [
     {
-      name: "Overview",
+      name: "Хяналт",
       url: "/dashboard",
       icon: <HugeiconsIcon icon={LayoutBottomIcon} strokeWidth={2} />,
     },
     {
-      name: "Lottery Items",
+      name: "Сугалаанууд",
       url: "/dashboard/lottery-items",
       icon: <HugeiconsIcon icon={CropIcon} strokeWidth={2} />,
     },
     {
-      name: "Transactions",
+      name: "Гүйлгээнүүд",
       url: "/dashboard/transactions",
       icon: <HugeiconsIcon icon={ComputerTerminalIcon} strokeWidth={2} />,
     },
     {
-      name: "Purchases",
+      name: "Авалтууд",
       url: "/dashboard/purchases",
       icon: <HugeiconsIcon icon={PlusSignCircleIcon} strokeWidth={2} />,
     },

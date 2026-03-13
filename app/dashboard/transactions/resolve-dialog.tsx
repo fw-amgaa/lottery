@@ -56,12 +56,12 @@ export default function ResolveDialog({ txn, lotteries, onClose }: Props) {
     try {
       if (txn.status === "warning") {
         await resolveWarning(txn.id, note);
-        toast.success("Transaction marked as resolved");
+        toast.success("Гүйлгээ шийдвэрлэгдлээ");
       } else {
-        if (!lotteryId) { toast.error("Select a lottery"); setLoading(false); return; }
-        if (!phone) { toast.error("Enter a phone number"); setLoading(false); return; }
+        if (!lotteryId) { toast.error("Сугалаа сонгоно уу"); setLoading(false); return; }
+        if (!phone) { toast.error("Утасны дугаар оруулна уу"); setLoading(false); return; }
         const { ticketCount } = await resolveUnmatched(txn.id, lotteryId, phone, note);
-        toast.success(`Resolved — ${ticketCount} ticket(s) assigned`);
+        toast.success(`Шийдвэрлэгдлээ — ${ticketCount} тасалбар олгогдлоо`);
       }
       onClose();
     } catch (err) {
@@ -80,12 +80,12 @@ export default function ResolveDialog({ txn, lotteries, onClose }: Props) {
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            {isWarning ? "Review transaction" : "Resolve transaction"}
+            {isWarning ? "Гүйлгээ шалгах" : "Гүйлгээ шийдвэрлэх"}
           </AlertDialogTitle>
           <AlertDialogDescription>
             {isWarning
-              ? `Purchase already created (${txn.ticket_count} tickets). Amount ${txn.amount.toLocaleString()}₮ — remainder exists. Confirm to dismiss warning.`
-              : `Amount: ${txn.amount.toLocaleString()}₮ · Desc: "${txn.txn_desc}"`}
+              ? `Худалдан авалт үүссэн (${txn.ticket_count} тасалбар). Дүн: ${txn.amount.toLocaleString()}₮ — үлдэгдэл бий. Анхааруулгыг хаах уу?`
+              : `Дүн: ${txn.amount.toLocaleString()}₮ · Тайлбар: "${txn.txn_desc}"`}
           </AlertDialogDescription>
         </AlertDialogHeader>
 
@@ -93,27 +93,27 @@ export default function ResolveDialog({ txn, lotteries, onClose }: Props) {
           {!isWarning && (
             <>
               <Field>
-                <FieldLabel>Assign to lottery</FieldLabel>
+                <FieldLabel>Сугалаа сонгох</FieldLabel>
                 <Select value={lotteryId} onValueChange={(v) => setLotteryId(v ?? "")}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select lottery..." />
+                    <SelectValue placeholder="Сугалаа сонгох..." />
                   </SelectTrigger>
                   <SelectContent>
                     {lotteries.map((l) => (
                       <SelectItem key={l.id} value={l.id}>
-                        {l.name} ({l.code}) — {l.price.toLocaleString()}₮/ticket
+                        {l.name} ({l.code}) — {l.price.toLocaleString()}₮/тасалбар
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
                 {estimatedTickets !== null && (
                   <p className="text-sm text-muted-foreground mt-1">
-                    → {estimatedTickets} ticket(s) will be assigned
+                    → {estimatedTickets} тасалбар олгогдоно
                   </p>
                 )}
               </Field>
               <Field>
-                <FieldLabel>Phone number</FieldLabel>
+                <FieldLabel>Утасны дугаар</FieldLabel>
                 <Input
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
@@ -124,11 +124,11 @@ export default function ResolveDialog({ txn, lotteries, onClose }: Props) {
             </>
           )}
           <Field>
-            <FieldLabel>Note (optional)</FieldLabel>
+            <FieldLabel>Тэмдэглэл (заавал биш)</FieldLabel>
             <Input
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              placeholder="Resolution note..."
+              placeholder="Тэмдэглэл..."
             />
           </Field>
         </FieldGroup>
@@ -136,10 +136,10 @@ export default function ResolveDialog({ txn, lotteries, onClose }: Props) {
         <AlertDialogFooter className="mt-4">
           <Field orientation="horizontal">
             <Button onClick={handleSubmit} disabled={loading}>
-              {loading ? "Saving..." : isWarning ? "Confirm & dismiss" : "Resolve"}
+              {loading ? "Хадгалж байна..." : isWarning ? "Баталгаажуулах" : "Шийдвэрлэх"}
             </Button>
             <Button variant="outline" onClick={onClose} disabled={loading}>
-              Cancel
+              Цуцлах
             </Button>
           </Field>
         </AlertDialogFooter>

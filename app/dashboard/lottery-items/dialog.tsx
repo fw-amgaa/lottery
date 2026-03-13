@@ -68,14 +68,14 @@ export default function LotteryItemDialog({
     try {
       if (isEditing) {
         await updateLotteryItem(selectedItem.id, data);
-        toast.success("Lottery item updated");
+        toast.success("Сугалаа шинэчлэгдлээ");
       } else {
         await insertLotteryItem(data);
-        toast.success("Lottery item created");
+        toast.success("Сугалаа амжилттай үүслээ");
       }
       setIsDialogOpen(false);
     } catch {
-      toast.error("Something went wrong");
+      toast.error("Алдаа гарлаа");
     } finally {
       setLoading(false);
     }
@@ -86,12 +86,12 @@ export default function LotteryItemDialog({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            {isEditing ? "Edit Lottery Item" : "Create Lottery Item"}
+            {isEditing ? "Сугалаа засах" : "Сугалаа үүсгэх"}
           </AlertDialogTitle>
           <AlertDialogDescription>
             {isEditing && selectedItem.code
-              ? `Lottery code: ${selectedItem.code} — customers send to this code`
-              : "A unique lottery code will be auto-generated"}
+              ? `Сугалааны код: ${selectedItem.code} — гүйлгээний утганд ашиглана`
+              : "Өвөрмөц код автоматаар үүснэ"}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <form onSubmit={handleSubmit}>
@@ -118,7 +118,7 @@ export default function LotteryItemDialog({
               <UploadButton
                 endpoint="imageUploader"
                 onClientUploadComplete={(res) => {
-                  toast.success("Upload Completed");
+                  toast.success("Амжилттай байршуулсан");
                   setUploadedImage(res[0].ufsUrl);
                 }}
                 onUploadError={(error: Error) => {
@@ -128,17 +128,17 @@ export default function LotteryItemDialog({
             )}
             <div className="grid grid-cols-2 gap-4">
               <Field>
-                <FieldLabel htmlFor="name">Lottery Name</FieldLabel>
+                <FieldLabel htmlFor="name">Сугалааны нэр</FieldLabel>
                 <Input
                   id="name"
                   name="name"
-                  placeholder="Enter lottery name"
+                  placeholder="Нэр оруулах"
                   defaultValue={selectedItem?.name ?? ""}
                   required
                 />
               </Field>
               <Field>
-                <FieldLabel htmlFor="price">Price (₮)</FieldLabel>
+                <FieldLabel htmlFor="price">Үнэ (₮)</FieldLabel>
                 <Input
                   id="price"
                   name="price"
@@ -151,7 +151,7 @@ export default function LotteryItemDialog({
             </div>
 
             <Field>
-              <FieldLabel htmlFor="total_tickets">Total Tickets</FieldLabel>
+              <FieldLabel htmlFor="total_tickets">Нийт тасалбар</FieldLabel>
               <Input
                 id="total_tickets"
                 name="total_tickets"
@@ -204,18 +204,18 @@ export default function LotteryItemDialog({
               <Button type="submit" disabled={loading}>
                 {loading
                   ? isEditing
-                    ? "Updating..."
-                    : "Creating..."
+                    ? "Шинэчилж байна..."
+                    : "Үүсгэж байна..."
                   : isEditing
-                    ? "Update"
-                    : "Create"}
+                    ? "Шинэчлэх"
+                    : "Үүсгэх"}
               </Button>
               <Button
                 variant="outline"
                 type="button"
                 onClick={() => setIsDialogOpen(false)}
               >
-                Cancel
+                Цуцлах
               </Button>
             </Field>
           </AlertDialogFooter>

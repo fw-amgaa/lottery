@@ -72,9 +72,9 @@ export default function LotteryItemsList({ items }: { items: LotteryItem[] }) {
     setDeleting(true);
     try {
       await deleteLotteryItem(deleteTarget.id);
-      toast.success("Lottery item deleted");
+      toast.success("Сугалаа устгагдлаа");
     } catch {
-      toast.error("Failed to delete");
+      toast.error("Устгаж чадсангүй");
     } finally {
       setDeleting(false);
       setDeleteTarget(null);
@@ -89,9 +89,9 @@ export default function LotteryItemsList({ items }: { items: LotteryItem[] }) {
             <HugeiconsIcon icon={Ticket02Icon} strokeWidth={2} />
           </EmptyMedia>
           <EmptyContent>
-            <EmptyTitle>No lottery items</EmptyTitle>
+            <EmptyTitle>Сугалаа байхгүй</EmptyTitle>
             <EmptyDescription>
-              Get started by creating your first lottery item.
+              Анхны сугалаагаа үүсгэж эхэлнэ үү.
             </EmptyDescription>
             <Button onClick={handleCreate}>
               <HugeiconsIcon
@@ -99,7 +99,7 @@ export default function LotteryItemsList({ items }: { items: LotteryItem[] }) {
                 strokeWidth={2}
                 data-icon="inline-start"
               />
-              Create Lottery Item
+              Сугалаа үүсгэх
             </Button>
           </EmptyContent>
         </Empty>
@@ -139,7 +139,7 @@ export default function LotteryItemsList({ items }: { items: LotteryItem[] }) {
                 </Badge>
               )}
               <CardDescription>
-                {item.sold_tickets} / {item.total_tickets} tickets sold
+                {item.sold_tickets} / {item.total_tickets} тасалбар зарагдсан
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -171,11 +171,11 @@ export default function LotteryItemsList({ items }: { items: LotteryItem[] }) {
               <Field orientation={"horizontal"} className="justify-between">
                 <Button onClick={() => handleEdit(item)}>
                   <HugeiconsIcon icon={Edit02Icon} strokeWidth={2} />
-                  Edit
+                  Засах
                 </Button>
                 <Button variant="outline" onClick={() => setDeleteTarget(item)}>
                   <HugeiconsIcon icon={Delete02Icon} strokeWidth={2} />
-                  Delete
+                  Устгах
                 </Button>
               </Field>
             </CardFooter>
@@ -197,20 +197,20 @@ export default function LotteryItemsList({ items }: { items: LotteryItem[] }) {
       >
         <AlertDialogContent size="sm">
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete lottery item</AlertDialogTitle>
+            <AlertDialogTitle>Сугалаа устгах</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete &quot;{deleteTarget?.name}&quot;?
-              This action cannot be undone.
+              &quot;{deleteTarget?.name}&quot; устгахдаа итгэлтэй байна уу?
+              Энэ үйлдлийг буцааж болохгүй.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Цуцлах</AlertDialogCancel>
             <AlertDialogAction
               variant="destructive"
               onClick={handleDelete}
               disabled={deleting}
             >
-              {deleting ? "Deleting..." : "Delete"}
+              {deleting ? "Устгаж байна..." : "Устгах"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

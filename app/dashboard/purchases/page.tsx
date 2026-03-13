@@ -13,8 +13,8 @@ export default async function PurchasesPage() {
   return (
     <div className="flex flex-col gap-4 p-4 pt-0">
       <div>
-        <h1 className="text-xl font-semibold">Purchases</h1>
-        <p className="text-muted-foreground text-sm">All successful ticket purchases</p>
+        <h1 className="text-xl font-semibold">Худалдан авалт</h1>
+        <p className="text-muted-foreground text-sm">Амжилттай бүртгэгдсэн тасалбарын авалтууд</p>
       </div>
       <PurchasesList purchases={result.rows} />
     </div>

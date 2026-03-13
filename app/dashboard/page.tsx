@@ -51,7 +51,7 @@ export default async function DashboardPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Today's Revenue</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Өнөөдрийн орлого</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">{Number(stats.today_revenue).toLocaleString()}₮</p>
@@ -59,7 +59,7 @@ export default async function DashboardPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Today's Purchases</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Өнөөдрийн авалт</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">{stats.today_purchases}</p>
@@ -67,7 +67,7 @@ export default async function DashboardPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Revenue</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Нийт орлого</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">{Number(stats.total_revenue).toLocaleString()}₮</p>
@@ -75,7 +75,7 @@ export default async function DashboardPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Needs Review</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Шалгах шаардлагатай</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold text-destructive">{stats.flagged_count}</p>
@@ -87,19 +87,19 @@ export default async function DashboardPage() {
       {flagged.length > 0 && (
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between">
-            <h2 className="font-semibold">Needs Review ({flagged.length})</h2>
+            <h2 className="font-semibold">Шалгах шаардлагатай ({flagged.length})</h2>
             <Link href="/dashboard/transactions">
-              <Button variant="outline" size="sm">View all transactions</Button>
+              <Button variant="outline" size="sm">Бүх гүйлгээ</Button>
             </Link>
           </div>
           <div className="rounded-lg border overflow-auto">
             <table className="w-full text-sm">
               <thead className="bg-muted/50">
                 <tr>
-                  <th className="text-left px-4 py-2 font-medium">Date</th>
-                  <th className="text-left px-4 py-2 font-medium">Amount</th>
-                  <th className="text-left px-4 py-2 font-medium">Description</th>
-                  <th className="text-left px-4 py-2 font-medium">Status</th>
+                  <th className="text-left px-4 py-2 font-medium">Огноо</th>
+                  <th className="text-left px-4 py-2 font-medium">Дүн</th>
+                  <th className="text-left px-4 py-2 font-medium">Тайлбар</th>
+                  <th className="text-left px-4 py-2 font-medium">Төлөв</th>
                   <th className="px-4 py-2" />
                 </tr>
               </thead>
@@ -120,7 +120,7 @@ export default async function DashboardPage() {
                     </td>
                     <td className="px-4 py-2">
                       <Link href="/dashboard/transactions">
-                        <Button size="sm" variant="outline">Resolve</Button>
+                        <Button size="sm" variant="outline">Шийдвэрлэх</Button>
                       </Link>
                     </td>
                   </tr>
@@ -134,25 +134,25 @@ export default async function DashboardPage() {
       {/* Recent purchases */}
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <h2 className="font-semibold">Recent Purchases</h2>
+          <h2 className="font-semibold">Сүүлийн авалтууд</h2>
           <Link href="/dashboard/purchases">
-            <Button variant="outline" size="sm">View all</Button>
+            <Button variant="outline" size="sm">Бүгдийг харах</Button>
           </Link>
         </div>
         <div className="rounded-lg border overflow-auto">
           <table className="w-full text-sm">
             <thead className="bg-muted/50">
               <tr>
-                <th className="text-left px-4 py-2 font-medium">Date</th>
-                <th className="text-left px-4 py-2 font-medium">Lottery</th>
-                <th className="text-left px-4 py-2 font-medium">Phone</th>
-                <th className="text-left px-4 py-2 font-medium">Amount</th>
-                <th className="text-left px-4 py-2 font-medium">Tickets</th>
+                <th className="text-left px-4 py-2 font-medium">Огноо</th>
+                <th className="text-left px-4 py-2 font-medium">Сугалаа</th>
+                <th className="text-left px-4 py-2 font-medium">Утас</th>
+                <th className="text-left px-4 py-2 font-medium">Дүн</th>
+                <th className="text-left px-4 py-2 font-medium">Тасалбар</th>
               </tr>
             </thead>
             <tbody>
               {recent.length === 0 && (
-                <tr><td colSpan={5} className="text-center py-6 text-muted-foreground">No purchases yet</td></tr>
+                <tr><td colSpan={5} className="text-center py-6 text-muted-foreground">Худалдан авалт байхгүй</td></tr>
               )}
               {recent.map((p: any) => (
                 <tr key={p.id} className="border-t hover:bg-muted/30">

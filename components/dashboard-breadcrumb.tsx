@@ -11,15 +11,15 @@ import {
 } from "@/components/ui/breadcrumb";
 
 const LABELS: Record<string, string> = {
-  "/dashboard": "Overview",
-  "/dashboard/lottery-items": "Lottery Items",
-  "/dashboard/transactions": "Transactions",
-  "/dashboard/purchases": "Purchases",
+  "/dashboard": "Хяналт",
+  "/dashboard/lottery-items": "Сугалаанууд",
+  "/dashboard/transactions": "Гүйлгээнүүд",
+  "/dashboard/purchases": "Авалтууд",
 };
 
 export default function DashboardBreadcrumb() {
   const pathname = usePathname();
-  const label = LABELS[pathname] ?? "Dashboard";
+  const label = LABELS[pathname] ?? "Хяналтын самбар";
   const isOverview = pathname === "/dashboard";
 
   return (
@@ -28,7 +28,7 @@ export default function DashboardBreadcrumb() {
         {!isOverview && (
           <>
             <BreadcrumbItem className="hidden md:block">
-              <BreadcrumbLink href="/dashboard">Overview</BreadcrumbLink>
+              <BreadcrumbLink href="/dashboard">Хяналт</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator className="hidden md:block" />
           </>
