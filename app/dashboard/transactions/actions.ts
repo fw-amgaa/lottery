@@ -7,15 +7,17 @@ import type { BankTransactionWithLottery } from "@/lib/bank-transactions";
 async function sendSms(to: string, message: string): Promise<void> {
   const url = process.env.BANK_FETCHER_URL;
   const secret = process.env.CALLBACK_SECRET;
-  if (!url || !secret) return;
-  try {
-    await fetch(`${url}/sms`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "x-api-key": secret },
-      body: JSON.stringify({ to, message }),
-    });
-  } catch (err) {
-    console.error("[sms] Failed to send:", err);
+  if (!url || !secret) {
+    console.warn("[sms] BANK_FETCHER_URL or CALLBACK_SECRET not configured — SMS skipped");
+    return;
+  }
+  const res = await fetch(`${url}/sms`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-api-key": secret },
+    body: JSON.stringify({ to, message }),
+  });
+  if (!res.ok) {
+    console.error("[sms] Failed:", res.status, await res.text());
   }
 }
 
@@ -100,9 +102,10 @@ export async function resolveUnmatched(
     );
     await pool.query(
       `UPDATE bank_transactions SET
-         status = 'completed', purchase_id = $1, resolved_at = NOW(), resolution_note = $2
-       WHERE id = $3`,
-      [pr.rows[0].id, note || null, txnId]
+         status = 'completed', purchase_id = $1, resolved_at = NOW(), resolution_note = $2,
+         parsed_phone = $3
+       WHERE id = $4`,
+      [pr.rows[0].id, note || null, phone, txnId]
     );
     await sendSms(
       phone,
