@@ -1,4 +1,4 @@
-export type TransactionStatus = "completed" | "warning" | "unmatched" | "error";
+export type TransactionStatus = "completed" | "warning" | "oversold" | "unmatched" | "error" | "insufficient";
 export type ParseConfidence = "high" | "medium" | "low" | "none";
 
 export type BankTransaction = {

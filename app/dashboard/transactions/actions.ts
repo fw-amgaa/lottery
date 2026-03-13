@@ -41,7 +41,7 @@ export async function getFlaggedTransactions(): Promise<BankTransactionWithLotte
     FROM bank_transactions bt
     LEFT JOIN purchases p ON p.id = bt.purchase_id
     LEFT JOIN lottery_items li ON li.id = p.lottery_item_id
-    WHERE bt.status IN ('warning', 'unmatched', 'error')
+    WHERE bt.status IN ('warning', 'oversold', 'unmatched', 'insufficient', 'error')
       AND bt.resolved_at IS NULL
     ORDER BY bt.txn_date DESC
   `);
@@ -106,7 +106,7 @@ export async function resolveUnmatched(
     );
     await sendSms(
       phone,
-      `Та "${lottery.name}" сугалаанд ${ticketCount} тасалбар амжилттай бүртгүүллээ! Азтай байгаарай 🍀`
+      `Та "${lottery.name}" сугалаанд ${ticketCount} тасалбар амжилттай бүртгүүллээ! Азтай байгаарай!`
     );
   }
 

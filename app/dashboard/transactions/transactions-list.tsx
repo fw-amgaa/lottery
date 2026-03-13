@@ -10,9 +10,17 @@ import ResolveDialog from "./resolve-dialog";
 const STATUS_BADGE: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
   completed: { label: "Completed", variant: "default" },
   warning: { label: "Warning", variant: "secondary" },
+  oversold: { label: "Oversold", variant: "secondary" },
   unmatched: { label: "Unmatched", variant: "outline" },
+  insufficient: { label: "Insufficient", variant: "outline" },
   error: { label: "Error", variant: "destructive" },
 };
+
+const PAGE_SIZE = 20;
+
+function formatDate(date: Date | string) {
+  return new Date(date).toLocaleString("mn-MN", { timeZone: "Asia/Ulaanbaatar" });
+}
 
 interface Props {
   transactions: BankTransactionWithLottery[];
@@ -22,18 +30,26 @@ interface Props {
 export default function TransactionsList({ transactions, lotteries }: Props) {
   const [resolving, setResolving] = React.useState<BankTransactionWithLottery | null>(null);
   const [filter, setFilter] = React.useState<string>("all");
+  const [page, setPage] = React.useState(1);
 
   const filtered = filter === "all" ? transactions : transactions.filter((t) => t.status === filter);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  function handleFilter(s: string) {
+    setFilter(s);
+    setPage(1);
+  }
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex gap-2 flex-wrap">
-        {["all", "completed", "warning", "unmatched", "error"].map((s) => (
+        {["all", "completed", "warning", "oversold", "unmatched", "insufficient", "error"].map((s) => (
           <Button
             key={s}
             variant={filter === s ? "default" : "outline"}
             size="sm"
-            onClick={() => setFilter(s)}
+            onClick={() => handleFilter(s)}
           >
             {s === "all" ? "All" : STATUS_BADGE[s]?.label ?? s}
             <Badge variant="secondary" className="ml-1">
@@ -43,11 +59,11 @@ export default function TransactionsList({ transactions, lotteries }: Props) {
         ))}
       </div>
 
-      <div className="rounded-lg border overflow-auto">
-        <table className="w-full text-sm">
+      <div className="rounded-lg border overflow-x-auto">
+        <table className="min-w-max w-full text-sm">
           <thead className="bg-muted/50">
             <tr>
-              <th className="text-left px-4 py-2 font-medium">Date</th>
+              <th className="text-left px-4 py-2 font-medium">Date (UTC+8)</th>
               <th className="text-left px-4 py-2 font-medium">Amount</th>
               <th className="text-left px-4 py-2 font-medium">Description</th>
               <th className="text-left px-4 py-2 font-medium">Phone</th>
@@ -58,26 +74,26 @@ export default function TransactionsList({ transactions, lotteries }: Props) {
             </tr>
           </thead>
           <tbody>
-            {filtered.length === 0 && (
+            {paginated.length === 0 && (
               <tr>
                 <td colSpan={8} className="text-center py-8 text-muted-foreground">
                   No transactions
                 </td>
               </tr>
             )}
-            {filtered.map((txn) => {
+            {paginated.map((txn) => {
               const isResolved = !!txn.resolved_at;
-              const needsAction = !isResolved && ["warning", "unmatched", "error"].includes(txn.status);
+              const needsAction = !isResolved && ["warning", "oversold", "unmatched", "insufficient", "error"].includes(txn.status);
               const badge = STATUS_BADGE[txn.status];
               return (
                 <tr key={txn.id} className="border-t hover:bg-muted/30">
                   <td className="px-4 py-2 whitespace-nowrap text-muted-foreground">
-                    {new Date(txn.txn_date).toLocaleString("mn-MN")}
+                    {formatDate(txn.txn_date)}
                   </td>
                   <td className="px-4 py-2 font-medium whitespace-nowrap">
                     {txn.amount.toLocaleString()}₮
                   </td>
-                  <td className="px-4 py-2 max-w-[200px] truncate text-muted-foreground" title={txn.txn_desc}>
+                  <td className="px-4 py-2 whitespace-nowrap text-muted-foreground max-w-[200px] truncate" title={txn.txn_desc}>
                     {txn.txn_desc}
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap">
@@ -107,6 +123,20 @@ export default function TransactionsList({ transactions, lotteries }: Props) {
           </tbody>
         </table>
       </div>
+
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <span>{filtered.length} transactions · page {page} of {totalPages}</span>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={() => setPage(p => p - 1)} disabled={page === 1}>
+              Previous
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setPage(p => p + 1)} disabled={page === totalPages}>
+              Next
+            </Button>
+          </div>
+        </div>
+      )}
 
       <ResolveDialog
         txn={resolving}

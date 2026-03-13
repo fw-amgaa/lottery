@@ -56,7 +56,6 @@ export default function LotteryItemDialog({
       name: formData.get("name") as string,
       price: Number(formData.get("price")),
       total_tickets: Number(formData.get("total_tickets")),
-      sold_tickets: Number(formData.get("sold_tickets") || 0),
       google_sheet_url: (formData.get("google_sheet_url") as string)
         ? `https://${(formData.get("google_sheet_url") as string).replace(/^https?:\/\//, "")}`
         : null,
@@ -151,29 +150,17 @@ export default function LotteryItemDialog({
               </Field>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <Field>
-                <FieldLabel htmlFor="total_tickets">Total Tickets</FieldLabel>
-                <Input
-                  id="total_tickets"
-                  name="total_tickets"
-                  type="number"
-                  placeholder="1000"
-                  defaultValue={selectedItem?.total_tickets ?? ""}
-                  required
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="sold_tickets">Sold Tickets</FieldLabel>
-                <Input
-                  id="sold_tickets"
-                  name="sold_tickets"
-                  type="number"
-                  placeholder="0"
-                  defaultValue={selectedItem?.sold_tickets ?? 0}
-                />
-              </Field>
-            </div>
+            <Field>
+              <FieldLabel htmlFor="total_tickets">Total Tickets</FieldLabel>
+              <Input
+                id="total_tickets"
+                name="total_tickets"
+                type="number"
+                placeholder="1000"
+                defaultValue={selectedItem?.total_tickets ?? ""}
+                required
+              />
+            </Field>
 
             <Field>
               <FieldLabel htmlFor="google_sheet_url">Google Sheet Url</FieldLabel>

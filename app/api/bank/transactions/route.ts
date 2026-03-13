@@ -85,13 +85,15 @@ export async function POST(req: NextRequest) {
   }
 
   const codesResult = await pool.query(
-    "SELECT id, code, price, name FROM lottery_items WHERE code IS NOT NULL"
+    "SELECT id, code, price, name, total_tickets, sold_tickets FROM lottery_items WHERE code IS NOT NULL"
   );
   const lotteries = codesResult.rows as {
     id: string;
     code: string;
     price: number;
     name: string;
+    total_tickets: number;
+    sold_tickets: number;
   }[];
   const validCodes = lotteries.map((l) => l.code);
 
@@ -117,38 +119,63 @@ export async function POST(req: NextRequest) {
     } else if (!lottery) {
       status = "unmatched";
     } else {
-      const ticketCount = Math.floor(txn.Amount / lottery.price);
+      const requested = Math.floor(txn.Amount / lottery.price);
       const remainder = txn.Amount % lottery.price;
-      status = remainder > 0 ? "warning" : "completed";
+      const remaining = lottery.total_tickets - lottery.sold_tickets;
 
-      if (ticketCount >= 1) {
-        const pr = await pool.query(
-          `INSERT INTO purchases
-             (lottery_item_id, phone_number, amount, ticket_count, jr_no, jr_item_no, txn_date, txn_desc)
-           VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-           ON CONFLICT (jr_no, jr_item_no) DO NOTHING
-           RETURNING id`,
-          [
-            lottery.id,
-            phone,
-            txn.Amount,
-            ticketCount,
-            txn.JrNo,
-            txn.JrItemNo,
-            txn.TxnDate,
-            txn.TxnDesc,
-          ]
+      // Amount too low for even 1 ticket
+      if (requested < 1) {
+        status = "insufficient";
+        await sendSms(
+          phone,
+          `Таны илгээсэн ${txn.Amount.toLocaleString()}₮ дүн "${lottery.name}" сугалааны нэг тасалбарын үнэ ${lottery.price.toLocaleString()}₮-с бага байна. Зөв дүнгээр дахин илгээнэ үү.`
         );
-        if (pr.rows.length > 0) {
-          purchaseId = pr.rows[0].id;
-          await pool.query(
-            "UPDATE lottery_items SET sold_tickets = sold_tickets + $1, updated_at = NOW() WHERE id = $2",
-            [ticketCount, lottery.id]
-          );
+      } else {
+        // Cap at remaining tickets if oversold
+        const ticketCount = Math.min(requested, remaining);
+        const isOversold = requested > remaining;
+        const hasRemainder = remainder > 0 && !isOversold;
+
+        if (isOversold && remaining === 0) {
+          // Lottery is completely sold out
+          status = "insufficient";
           await sendSms(
             phone,
-            `Та "${lottery.name}" сугалаанд ${ticketCount} тасалбар амжилттай бүртгүүллээ! Азтай байгаарай 🍀`
+            `"${lottery.name}" сугалааны тасалбар дууссан байна. Буцаан олголтын талаар бидэнтэй холбоо барина уу.`
           );
+        } else {
+          status = isOversold ? "oversold" : hasRemainder ? "warning" : "completed";
+
+          const pr = await pool.query(
+            `INSERT INTO purchases
+               (lottery_item_id, phone_number, amount, ticket_count, jr_no, jr_item_no, txn_date, txn_desc)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+             ON CONFLICT (jr_no, jr_item_no) DO NOTHING
+             RETURNING id`,
+            [lottery.id, phone, txn.Amount, ticketCount,
+             txn.JrNo, txn.JrItemNo, txn.TxnDate, txn.TxnDesc]
+          );
+
+          if (pr.rows.length > 0) {
+            purchaseId = pr.rows[0].id;
+            await pool.query(
+              "UPDATE lottery_items SET sold_tickets = sold_tickets + $1, updated_at = NOW() WHERE id = $2",
+              [ticketCount, lottery.id]
+            );
+
+            if (isOversold) {
+              const extraAmount = (requested - remaining) * lottery.price + remainder;
+              await sendSms(
+                phone,
+                `Та "${lottery.name}" сугалаанд ${ticketCount} тасалбар авлаа. Илүү илгээсэн ${extraAmount.toLocaleString()}₮-ийг буцаан олгох талаар удахгүй холбоо барих болно.`
+              );
+            } else {
+              await sendSms(
+                phone,
+                `Та "${lottery.name}" сугалаанд ${ticketCount} тасалбар амжилттай бүртгүүллээ! Азтай байгаарай!`
+              );
+            }
+          }
         }
       }
     }

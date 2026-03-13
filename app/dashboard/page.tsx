@@ -107,7 +107,7 @@ export default async function DashboardPage() {
                 {flagged.map((txn: any) => (
                   <tr key={txn.id} className="border-t hover:bg-muted/30">
                     <td className="px-4 py-2 whitespace-nowrap text-muted-foreground">
-                      {new Date(txn.txn_date).toLocaleString("mn-MN")}
+                      {new Date(txn.txn_date).toLocaleString("mn-MN", { timeZone: "Asia/Ulaanbaatar" })}
                     </td>
                     <td className="px-4 py-2 font-medium">{Number(txn.amount).toLocaleString()}₮</td>
                     <td className="px-4 py-2 max-w-[200px] truncate text-muted-foreground" title={txn.txn_desc}>
@@ -157,7 +157,7 @@ export default async function DashboardPage() {
               {recent.map((p: any) => (
                 <tr key={p.id} className="border-t hover:bg-muted/30">
                   <td className="px-4 py-2 whitespace-nowrap text-muted-foreground">
-                    {new Date(p.txn_date).toLocaleString("mn-MN")}
+                    {new Date(p.txn_date).toLocaleString("mn-MN", { timeZone: "Asia/Ulaanbaatar" })}
                   </td>
                   <td className="px-4 py-2">{p.lottery_name}</td>
                   <td className="px-4 py-2">{p.phone_number}</td>
