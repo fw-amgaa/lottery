@@ -106,6 +106,20 @@ export default async function Page() {
           </h2>
         </div>
 
+        {/* payment info */}
+        <div className="mb-10 rounded-2xl border border-white/[0.06] bg-white/[0.02] px-6 py-5 flex flex-col sm:flex-row sm:items-center gap-4">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/[0.05]">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-white/60">
+              <rect x="2" y="5" width="20" height="14" rx="2" />
+              <path d="M2 10h20" />
+            </svg>
+          </div>
+          <div>
+            <p className="text-xs uppercase tracking-wider text-white/30 mb-1">Мөнгө шилжүүлэх данс — Төрийн банк</p>
+            <p className="font-mono text-lg font-semibold tracking-wider text-white/80">MN300034889696595988</p>
+          </div>
+        </div>
+
         {items.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-white/10 py-24 text-center">
             <p className="text-lg text-white/30">
@@ -170,13 +184,13 @@ export default async function Page() {
                       </p>
                     </div>
 
-                    {/* bank */}
-                    <div className="rounded-xl bg-white/[0.04] p-3">
-                      <p className="mb-1 text-[11px] uppercase tracking-wider text-white/30">
-                        Дансны дугаар
+                    {/* code */}
+                    <div className="rounded-xl bg-amber-500/[0.06] border border-amber-500/10 p-3">
+                      <p className="mb-1 text-[11px] uppercase tracking-wider text-amber-400/60">
+                        Сугалааны код
                       </p>
-                      <p className="font-mono text-sm tracking-wider text-white/70">
-                        {item.bank_account_number}
+                      <p className="font-mono text-lg font-bold tracking-widest text-amber-300">
+                        {item.code ?? "—"}
                       </p>
                     </div>
 
@@ -242,7 +256,7 @@ export default async function Page() {
               {
                 step: "01",
                 title: "Тасалбар авах",
-                desc: "Сугалааны тасалбарыг дансруу мөнгө шилжүүлж худалдан аваарай. Гүйлгээний утга дээр утасны дугаараа бичнэ үү.",
+                desc: "Төрийн банкны MN300034889696595988 дансруу тасалбарын үнийн дүнг шилжүүлнэ үү. Гүйлгээний утганд «КОД-УТАСНЫДУГААР» форматаар бичнэ үү. Жишээ: SHBY-99887766",
               },
               {
                 step: "02",
@@ -291,8 +305,7 @@ export default async function Page() {
                 </h4>
                 <ul className="space-y-1.5 text-sm leading-relaxed text-white/40">
                   <li>
-                    Гүйлгээний утга дээр заавал утасны дугаараа бичнэ үү,
-                    тэгэхгүй бол тасалбар баталгаажихгүй.
+                    Гүйлгээний утганд <span className="font-mono text-white/60">КОД-УТАСНЫДУГААР</span> форматаар заавал бичнэ үү (жишээ: <span className="font-mono text-white/60">SHBY-99887766</span>). Тэгэхгүй бол тасалбар баталгаажихгүй.
                   </li>
                   <li>
                     Нэг удаагийн шилжүүлгээр олон тасалбар авах бол үнийн дүнг
@@ -340,10 +353,7 @@ export default async function Page() {
               </div>
               <h3 className="mb-2 font-semibold">Оролцох нөхцөл</h3>
               <p className="text-sm leading-relaxed text-white/40">
-                Сугалаанд оролцохын тулд заасан дансруу тасалбарын үнийн дүнг
-                шилжүүлж, гүйлгээний утганд утасны дугаараа бичнэ. Тасалбар
-                батлагдсан тохиолдолд Google Sheet дээр таны мэдээлэл
-                бүртгэгдэнэ.
+                Сугалаанд оролцохын тулд Төрийн банкны <span className="font-mono text-white/50">MN300034889696595988</span> дансруу тасалбарын үнийн дүнг шилжүүлж, гүйлгээний утганд <span className="font-mono text-white/50">КОД-УТАСНЫДУГААР</span> форматаар бичнэ үү. Тасалбар батлагдсан тохиолдолд таны утас руу мессеж ирнэ.
               </p>
             </div>
 
