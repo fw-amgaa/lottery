@@ -18,7 +18,7 @@ export default async function Page() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
       {/* ============ HEADER ============ */}
-      <header className="sticky top-0 z-50 border-b border-white/5 bg-transparent backdrop-blur-xl">
+      <header className="sticky top-0 z-50 border-b border-white/5 bg-transparent">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
           <Link href="/" className="flex items-center gap-3">
             <Image src="/logo.png" alt="Азтай Монгол" width={36} height={36} />
@@ -41,7 +41,7 @@ export default async function Page() {
       </header>
 
       {/* ============ HERO ============ */}
-      <section className="relative flex min-h-[80vh] flex-col items-center justify-center overflow-hidden px-6">
+      <section className="relative -mt-16 flex min-h-[100vh] flex-col items-center justify-center overflow-hidden px-6">
         {/* cover image — sits behind everything */}
         <div
           className="absolute inset-[-8px]"
