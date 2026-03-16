@@ -20,6 +20,7 @@ import {
   PlusSignCircleIcon,
   RoboticIcon,
   Settings05Icon,
+  Contact01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Button } from "./ui/button";
@@ -145,6 +146,11 @@ const data = {
       name: "Худалдан авалтууд",
       url: "/dashboard/purchases",
       icon: <HugeiconsIcon icon={PlusSignCircleIcon} strokeWidth={2} />,
+    },
+    {
+      name: "Хэрэглэгчид",
+      url: "/dashboard/contacts",
+      icon: <HugeiconsIcon icon={Contact01Icon} strokeWidth={2} />,
     },
   ],
 };

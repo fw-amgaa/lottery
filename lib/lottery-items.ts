@@ -9,6 +9,7 @@ export type LotteryItem = {
   google_sheet_url: string | null;
   facebook_url: string | null;
   image_url: string | null;
+  archived: boolean;
   created_at: Date;
   updated_at: Date;
 };

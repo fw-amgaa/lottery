@@ -96,3 +96,21 @@ export async function deleteLotteryItem(id: string): Promise<void> {
   await pool.query("DELETE FROM lottery_items WHERE id = $1", [id]);
   revalidatePath("/dashboard/lottery-items");
 }
+
+export async function archiveLotteryItem(id: string): Promise<void> {
+  await pool.query(
+    "UPDATE lottery_items SET archived = TRUE, updated_at = NOW() WHERE id = $1",
+    [id]
+  );
+  revalidatePath("/dashboard/lottery-items");
+  revalidatePath("/");
+}
+
+export async function unarchiveLotteryItem(id: string): Promise<void> {
+  await pool.query(
+    "UPDATE lottery_items SET archived = FALSE, updated_at = NOW() WHERE id = $1",
+    [id]
+  );
+  revalidatePath("/dashboard/lottery-items");
+  revalidatePath("/");
+}

@@ -34,14 +34,19 @@ import {
   Edit02Icon,
   Delete02Icon,
   GoogleSheetIcon,
-  FacebookIcon,
   Facebook02FreeIcons,
+  Archive01Icon,
+  ArrowReloadHorizontalIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import React from "react";
 import LotteryItemDialog from "./dialog";
 import Image from "next/image";
-import { deleteLotteryItem } from "./actions";
+import {
+  deleteLotteryItem,
+  archiveLotteryItem,
+  unarchiveLotteryItem,
+} from "./actions";
 import { toast } from "sonner";
 import { Field } from "@/components/ui/field";
 import { Progress } from "@/components/ui/progress";
@@ -56,6 +61,7 @@ export default function LotteryItemsList({ items }: { items: LotteryItem[] }) {
     null,
   );
   const [deleting, setDeleting] = React.useState(false);
+  const [archiving, setArchiving] = React.useState<string | null>(null);
 
   function handleCreate() {
     setSelectedItem(null);
@@ -78,6 +84,23 @@ export default function LotteryItemsList({ items }: { items: LotteryItem[] }) {
     } finally {
       setDeleting(false);
       setDeleteTarget(null);
+    }
+  }
+
+  async function handleArchive(item: LotteryItem) {
+    setArchiving(item.id);
+    try {
+      if (item.archived) {
+        await unarchiveLotteryItem(item.id);
+        toast.success("Сугалаа сэргээгдлээ");
+      } else {
+        await archiveLotteryItem(item.id);
+        toast.success("Сугалаа дууссан төлөвт шилжлээ");
+      }
+    } catch {
+      toast.error("Алдаа гарлаа");
+    } finally {
+      setArchiving(null);
     }
   }
 
@@ -114,11 +137,22 @@ export default function LotteryItemsList({ items }: { items: LotteryItem[] }) {
 
   return (
     <div className="flex flex-col gap-4">
+      <div className="flex justify-end">
+        <Button onClick={handleCreate}>
+          <HugeiconsIcon
+            icon={PlusSignIcon}
+            strokeWidth={2}
+            data-icon="inline-start"
+          />
+          Сугалаа үүсгэх
+        </Button>
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {items.map((item) => (
           <Card
             key={item.id}
-            className="relative w-full max-w-sm overflow-hidden pt-0 mx-auto"
+            className={`relative w-full max-w-sm overflow-hidden pt-0 mx-auto ${item.archived ? "opacity-70" : ""}`}
           >
             <div className="w-full h-[200px] relative">
               {item.image_url && (
@@ -129,11 +163,28 @@ export default function LotteryItemsList({ items }: { items: LotteryItem[] }) {
                   className="z-20 object-cover"
                 />
               )}
+              {item.archived && (
+                <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/40">
+                  <Badge variant="secondary" className="text-sm px-3 py-1">
+                    Дууссан
+                  </Badge>
+                </div>
+              )}
             </div>
 
             <CardHeader>
-              <CardTitle>{item.name}</CardTitle>
-              {item.code && (
+              <div className="flex items-center justify-between gap-2">
+                <CardTitle>{item.name}</CardTitle>
+                {item.archived && (
+                  <Badge
+                    variant="outline"
+                    className="shrink-0 text-muted-foreground"
+                  >
+                    Дууссан
+                  </Badge>
+                )}
+              </div>
+              {!item.archived && item.code && (
                 <Badge variant="outline" className="font-mono w-fit">
                   {item.code}
                 </Badge>
@@ -142,6 +193,7 @@ export default function LotteryItemsList({ items }: { items: LotteryItem[] }) {
                 {item.sold_tickets} / {item.total_tickets} тасалбар зарагдсан
               </CardDescription>
             </CardHeader>
+
             <CardContent>
               <Progress
                 value={(item.sold_tickets / item.total_tickets) * 100}
@@ -151,31 +203,59 @@ export default function LotteryItemsList({ items }: { items: LotteryItem[] }) {
                 <Badge variant="secondary">
                   {item.price.toLocaleString()}₮
                 </Badge>
-
-                <Link href={item.google_sheet_url || "/"} target="_blank">
-                  <Badge variant={"secondary"}>
-                    <HugeiconsIcon icon={GoogleSheetIcon} strokeWidth={2} />
-                    Sheets
-                  </Badge>
-                </Link>
-
-                <Link href={item.facebook_url || "/"} target="_blank">
-                  <Badge variant={"secondary"}>
-                    <HugeiconsIcon icon={Facebook02FreeIcons} strokeWidth={2} />
-                    Facebook
-                  </Badge>
-                </Link>
+                {item.google_sheet_url && (
+                  <Link href={item.google_sheet_url} target="_blank">
+                    <Badge variant="secondary">
+                      <HugeiconsIcon icon={GoogleSheetIcon} strokeWidth={2} />
+                      Sheets
+                    </Badge>
+                  </Link>
+                )}
+                {item.facebook_url && (
+                  <Link href={item.facebook_url} target="_blank">
+                    <Badge variant="secondary">
+                      <HugeiconsIcon
+                        icon={Facebook02FreeIcons}
+                        strokeWidth={2}
+                      />
+                      Facebook
+                    </Badge>
+                  </Link>
+                )}
               </Field>
             </CardContent>
+
             <CardFooter>
-              <Field orientation={"horizontal"} className="justify-between">
+              <Field
+                orientation="horizontal"
+                className="justify-between w-full"
+              >
                 <Button onClick={() => handleEdit(item)}>
                   <HugeiconsIcon icon={Edit02Icon} strokeWidth={2} />
                   Засах
                 </Button>
-                <Button variant="outline" onClick={() => setDeleteTarget(item)}>
+                <Button
+                  variant="outline"
+                  onClick={() => handleArchive(item)}
+                  disabled={archiving === item.id}
+                >
+                  <HugeiconsIcon
+                    icon={
+                      item.archived ? ArrowReloadHorizontalIcon : Archive01Icon
+                    }
+                    strokeWidth={2}
+                  />
+                  {archiving === item.id
+                    ? "..."
+                    : item.archived
+                      ? "Сэргээх"
+                      : "Дуусгах"}
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={() => setDeleteTarget(item)}
+                >
                   <HugeiconsIcon icon={Delete02Icon} strokeWidth={2} />
-                  Устгах
                 </Button>
               </Field>
             </CardFooter>
@@ -199,8 +279,8 @@ export default function LotteryItemsList({ items }: { items: LotteryItem[] }) {
           <AlertDialogHeader>
             <AlertDialogTitle>Сугалаа устгах</AlertDialogTitle>
             <AlertDialogDescription>
-              &quot;{deleteTarget?.name}&quot; устгахдаа итгэлтэй байна уу?
-              Энэ үйлдлийг буцааж болохгүй.
+              &quot;{deleteTarget?.name}&quot; устгахдаа итгэлтэй байна уу? Энэ
+              үйлдлийг буцааж болохгүй.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

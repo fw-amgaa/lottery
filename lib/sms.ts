@@ -26,12 +26,16 @@ export function identifyOperator(phone: string): Operator {
   return PREFIX_MAP[phone.substring(0, 2)] ?? "unknown";
 }
 
-export async function sendSms(to: string, message: string): Promise<void> {
+export async function sendSms(
+  to: string,
+  message: string
+): Promise<{ ok: boolean; error?: string }> {
   const url = process.env.BANK_FETCHER_URL;
   const secret = process.env.CALLBACK_SECRET;
   if (!url || !secret) {
-    console.warn("[sms] BANK_FETCHER_URL or CALLBACK_SECRET not configured — SMS skipped");
-    return;
+    const err = "BANK_FETCHER_URL or CALLBACK_SECRET not configured";
+    console.warn("[sms]", err);
+    return { ok: false, error: err };
   }
 
   const operator = identifyOperator(to);
@@ -52,9 +56,13 @@ export async function sendSms(to: string, message: string): Promise<void> {
       body: JSON.stringify({ to, message }),
     });
     if (!res.ok) {
-      console.error(`[sms/${operator}] Failed:`, res.status, await res.text());
+      const body = await res.text();
+      console.error(`[sms/${operator}] Failed:`, res.status, body);
+      return { ok: false, error: `HTTP ${res.status}: ${body}` };
     }
+    return { ok: true };
   } catch (err) {
     console.error(`[sms/${operator}] Error:`, err);
+    return { ok: false, error: String(err) };
   }
 }

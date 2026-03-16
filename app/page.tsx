@@ -1,7 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 
-const FACEBOOK_FALLBACK = "https://www.facebook.com/profile.php?id=61574923694972";
+const FACEBOOK_FALLBACK =
+  "https://www.facebook.com/profile.php?id=61574923694972";
 import { getLotteryItems } from "./dashboard/lottery-items/actions";
 import {
   Progress,
@@ -17,7 +18,7 @@ export default async function Page() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
       {/* ============ HEADER ============ */}
-      <header className="sticky top-0 z-50 border-b border-white/5 bg-[#0a0a0a]/80 backdrop-blur-xl">
+      <header className="sticky top-0 z-50 border-b border-white/5 bg-transparent backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
           <Link href="/" className="flex items-center gap-3">
             <Image src="/logo.png" alt="Азтай Монгол" width={36} height={36} />
@@ -41,56 +42,69 @@ export default async function Page() {
 
       {/* ============ HERO ============ */}
       <section className="relative flex min-h-[80vh] flex-col items-center justify-center overflow-hidden px-6">
-        {/* bg glow */}
-        <div className="pointer-events-none absolute top-1/2 left-1/2 -z-10 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-500/10 blur-[160px]" />
+        {/* cover image — sits behind everything */}
+        <div
+          className="absolute inset-[-8px]"
+          style={{
+            backgroundImage: "url('/cover.png')",
+            backgroundSize: "cover",
+            backgroundPosition: "center 30%",
+            filter: "brightness(0.4)",
+          }}
+        />
+        {/* dark overlay */}
+        {/* <div className="absolute inset-0 bg-black/10" /> */}
 
-        <div className="relative mb-8 h-40 w-32 sm:h-48 sm:w-40">
-          <Image
-            src="/logo.png"
-            alt="Азтай Монгол Сугалаа"
-            fill
-            className="object-contain"
-            priority
-          />
+        {/* content — z-10 so it sits above the bg layers */}
+        <div className="relative z-10 flex flex-col items-center">
+          <div className="relative mb-8 h-40 w-32 sm:h-48 sm:w-40">
+            <Image
+              src="/logo.png"
+              alt="Азтай Монгол Сугалаа"
+              fill
+              className="object-contain"
+              priority
+            />
+          </div>
+
+          <h1 className="max-w-3xl text-center text-5xl font-extrabold leading-[1.1] tracking-tight sm:text-7xl">
+            <span className="bg-gradient-to-r from-amber-200 via-amber-400 to-orange-400 bg-clip-text text-transparent">
+              Азтай Монгол
+            </span>
+            <br />
+            <span className="text-white/90">Сугалаа</span>
+          </h1>
+
+          <p className="mt-6 max-w-lg text-center text-lg leading-relaxed text-white/40">
+            Азтай монгол сугалаанд оролцож, хүссэн бүтээгдэхүүнээ хожоорой.
+            Тасалбараа авч, хожлоо шалгаарай.
+          </p>
+
+          <a
+            href="#lottery"
+            className="mt-10 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-8 py-3.5 text-sm font-semibold text-black transition hover:brightness-110"
+          >
+            Сугалаа үзэх
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="none"
+              className="mt-px"
+            >
+              <path
+                d="M8 3v10m0 0l4-4m-4 4L4 9"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </a>
         </div>
 
-        <h1 className="max-w-3xl text-center text-5xl font-extrabold leading-[1.1] tracking-tight sm:text-7xl">
-          <span className="bg-gradient-to-r from-amber-200 via-amber-400 to-orange-400 bg-clip-text text-transparent">
-            Азтай Монгол
-          </span>
-          <br />
-          <span className="text-white/90">Сугалаа</span>
-        </h1>
-
-        <p className="mt-6 max-w-lg text-center text-lg leading-relaxed text-white/40">
-          Азтай монгол сугалаанд оролцож, хүссэн бүтээгдэхүүнээ хожоорой.
-          Тасалбараа авч, хожлоо шалгаарай.
-        </p>
-
-        <a
-          href="#lottery"
-          className="mt-10 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-8 py-3.5 text-sm font-semibold text-black transition hover:brightness-110"
-        >
-          Сугалаа үзэх
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            className="mt-px"
-          >
-            <path
-              d="M8 3v10m0 0l4-4m-4 4L4 9"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </a>
-
-        {/* subtle scroll indicator */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2">
+        {/* scroll indicator */}
+        <div className="absolute bottom-10 left-1/2 z-10 -translate-x-1/2">
           <div className="h-8 w-5 rounded-full border border-white/20 p-1">
             <div className="mx-auto h-2 w-1 animate-bounce rounded-full bg-white/40" />
           </div>
@@ -111,14 +125,28 @@ export default async function Page() {
         {/* payment info */}
         <div className="mb-10 rounded-2xl border border-amber-500/10 bg-amber-500/[0.06] px-6 py-5 flex flex-col sm:flex-row sm:items-center gap-4">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/10">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-amber-400">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="text-amber-400"
+            >
               <rect x="2" y="5" width="20" height="14" rx="2" />
               <path d="M2 10h20" />
             </svg>
           </div>
           <div>
-            <p className="text-xs uppercase tracking-wider text-amber-400/60 mb-1">Мөнгө шилжүүлэх данс — Төрийн банк</p>
-            <p className="font-mono text-lg font-bold tracking-widest text-amber-300">MN300034889696595988</p>
+            <p className="text-xs uppercase tracking-wider text-amber-400/60 mb-1">
+              Мөнгө шилжүүлэх данс — Төрийн банк
+            </p>
+            <p className="font-mono text-lg font-bold tracking-widest text-amber-300">
+              MN300034889696595988
+            </p>
           </div>
         </div>
 
@@ -186,15 +214,24 @@ export default async function Page() {
                       </p>
                     </div>
 
-                    {/* code */}
-                    <div className="rounded-xl bg-amber-500/[0.06] border border-amber-500/10 p-3">
-                      <p className="mb-1 text-[11px] uppercase tracking-wider text-amber-400/60">
-                        Сугалааны код
-                      </p>
-                      <p className="font-mono text-lg font-bold tracking-widest text-amber-300">
-                        {item.code ?? "—"}
-                      </p>
-                    </div>
+                    {/* code / archived state */}
+                    {item.archived ? (
+                      <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3 flex items-center gap-2.5">
+                        <span className="h-2 w-2 rounded-full bg-white/20" />
+                        <span className="text-sm font-medium text-white/35">
+                          Дууссан
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="rounded-xl bg-amber-500/[0.06] border border-amber-500/10 p-3">
+                        <p className="mb-1 text-[11px] uppercase tracking-wider text-amber-400/60">
+                          Сугалааны код
+                        </p>
+                        <p className="font-mono text-lg font-bold tracking-widest text-amber-300">
+                          {item.code ?? "—"}
+                        </p>
+                      </div>
+                    )}
 
                     {/* links */}
                     <div className="flex gap-2">
@@ -307,7 +344,15 @@ export default async function Page() {
                 </h4>
                 <ul className="space-y-1.5 text-sm leading-relaxed text-white/40">
                   <li>
-                    Гүйлгээний утганд <span className="font-mono text-white/60">КОД-УТАСНЫДУГААР</span> форматаар заавал бичнэ үү (жишээ: <span className="font-mono text-white/60">SHBY-99887766</span>). Тэгэхгүй бол тасалбар баталгаажихгүй.
+                    Гүйлгээний утганд{" "}
+                    <span className="font-mono text-white/60">
+                      КОД-УТАСНЫДУГААР
+                    </span>{" "}
+                    форматаар заавал бичнэ үү (жишээ:{" "}
+                    <span className="font-mono text-white/60">
+                      SHBY-99887766
+                    </span>
+                    ). Тэгэхгүй бол тасалбар баталгаажихгүй.
                   </li>
                   <li>
                     Нэг удаагийн шилжүүлгээр олон тасалбар авах бол үнийн дүнг
@@ -355,7 +400,16 @@ export default async function Page() {
               </div>
               <h3 className="mb-2 font-semibold">Оролцох нөхцөл</h3>
               <p className="text-sm leading-relaxed text-white/40">
-                Сугалаанд оролцохын тулд Төрийн банкны <span className="font-mono text-white/50">MN300034889696595988</span> дансруу тасалбарын үнийн дүнг шилжүүлж, гүйлгээний утганд <span className="font-mono text-white/50">КОД-УТАСНЫДУГААР</span> форматаар бичнэ үү. Тасалбар батлагдсан тохиолдолд таны утас руу мессеж ирнэ.
+                Сугалаанд оролцохын тулд Төрийн банкны{" "}
+                <span className="font-mono text-white/50">
+                  MN300034889696595988
+                </span>{" "}
+                дансруу тасалбарын үнийн дүнг шилжүүлж, гүйлгээний утганд{" "}
+                <span className="font-mono text-white/50">
+                  КОД-УТАСНЫДУГААР
+                </span>{" "}
+                форматаар бичнэ үү. Тасалбар батлагдсан тохиолдолд таны утас руу
+                мессеж ирнэ.
               </p>
             </div>
 
