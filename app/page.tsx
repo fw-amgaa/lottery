@@ -75,7 +75,7 @@ export default async function Page() {
             <span className="text-white/90">Сугалаа</span>
           </h1>
 
-          <p className="mt-6 max-w-lg text-center text-lg leading-relaxed text-white/40">
+          <p className="mt-6 max-w-lg text-center text-lg leading-relaxed text-white/70">
             Азтай монгол сугалаанд оролцож, хүссэн бүтээгдэхүүнээ хожоорой.
             Тасалбараа авч, хожлоо шалгаарай.
           </p>
