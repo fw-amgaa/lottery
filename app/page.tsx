@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import CopyButton from "@/components/copy-button";
 
 const FACEBOOK_FALLBACK =
   "https://www.facebook.com/profile.php?id=61574923694972";
@@ -140,13 +141,16 @@ export default async function Page() {
               <path d="M2 10h20" />
             </svg>
           </div>
-          <div>
-            <p className="text-xs uppercase tracking-wider text-amber-400/60 mb-1">
-              Мөнгө шилжүүлэх данс — Төрийн банк
-            </p>
-            <p className="font-mono text-lg font-bold tracking-widest text-amber-300">
-              MN300034889696595988
-            </p>
+          <div className="flex flex-1 items-center justify-between gap-3 flex-wrap">
+            <div>
+              <p className="text-xs uppercase tracking-wider text-amber-400/60 mb-1">
+                Мөнгө шилжүүлэх данс — Төрийн банк
+              </p>
+              <p className="font-mono text-lg font-bold tracking-widest text-amber-300">
+                MN300034889696595988
+              </p>
+            </div>
+            <CopyButton value="MN300034889696595988" />
           </div>
         </div>
 
@@ -170,22 +174,24 @@ export default async function Page() {
                   key={item.id}
                   className="group relative overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] transition hover:border-white/10 hover:bg-white/[0.04]"
                 >
-                  {/* image */}
-                  {item.image_url ? (
-                    <div className="relative aspect-[16/10] w-full overflow-hidden">
-                      <Image
-                        src={item.image_url}
-                        alt={item.name}
-                        fill
-                        className="object-cover transition duration-500 group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent" />
-                    </div>
-                  ) : (
-                    <div className="flex aspect-[16/10] w-full items-center justify-center bg-white/[0.03]">
-                      <span className="text-4xl">🎫</span>
-                    </div>
-                  )}
+                  {/* image — click to view entries */}
+                  <Link href={`/lottery-item/${item.id}`}>
+                    {item.image_url ? (
+                      <div className="relative aspect-[16/10] w-full overflow-hidden">
+                        <Image
+                          src={item.image_url}
+                          alt={item.name}
+                          fill
+                          className="object-cover transition duration-500 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent" />
+                      </div>
+                    ) : (
+                      <div className="flex aspect-[16/10] w-full items-center justify-center bg-white/[0.03]">
+                        <span className="text-4xl">🎫</span>
+                      </div>
+                    )}
+                  </Link>
 
                   <div className="space-y-4 p-5">
                     {/* title + price */}

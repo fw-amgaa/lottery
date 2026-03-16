@@ -2,50 +2,10 @@ import { pool } from "@/lib/db";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import TicketEntriesTable from "@/components/ticket-entries-table";
+import type { TicketRow } from "@/components/ticket-entries-table";
 
 const FACEBOOK_FALLBACK = "https://www.facebook.com/profile.php?id=61574923694972";
-
-interface Purchase {
-  id: string;
-  phone_number: string;
-  ticket_count: number;
-  txn_date: Date;
-}
-
-interface TicketRow {
-  ticketNumber: number;
-  phone: string;
-  purchaseId: string;
-  lotteryName: string;
-  txnDate: Date;
-}
-
-// Very low saturation — nearly grey, just enough hue to group by color
-function colorForPhone(phone: string) {
-  let hash = 0;
-  for (let i = 0; i < phone.length; i++) {
-    hash = ((hash << 5) - hash) + phone.charCodeAt(i);
-    hash |= 0;
-  }
-  const hue = Math.abs(hash) % 360;
-  return {
-    bg: `hsl(${hue}, 10%, 12%)`,
-    accent: `hsl(${hue}, 18%, 52%)`,
-    text: `hsl(${hue}, 12%, 68%)`,
-  };
-}
-
-function formatDate(date: Date) {
-  return new Date(date).toLocaleString("mn-MN", {
-    timeZone: "Asia/Ulaanbaatar",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
-}
 
 export default async function Page({
   params,
@@ -68,19 +28,17 @@ export default async function Page({
      ORDER BY txn_date ASC, id ASC`,
     [id]
   );
-  const purchases: Purchase[] = purchasesResult.rows;
 
-  // Expand purchases into individual ticket rows
   const rows: TicketRow[] = [];
   let counter = 1;
-  for (const p of purchases) {
+  for (const p of purchasesResult.rows) {
     for (let i = 0; i < p.ticket_count; i++) {
       rows.push({
         ticketNumber: counter++,
         phone: p.phone_number,
         purchaseId: p.id,
         lotteryName: item.name,
-        txnDate: p.txn_date,
+        txnDate: new Date(p.txn_date).toISOString(),
       });
     }
   }
@@ -89,7 +47,6 @@ export default async function Page({
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
-      {/* Header */}
       <header className="sticky top-0 z-50 border-b border-white/5 bg-[#0a0a0a]/80 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-4xl items-center justify-between px-6">
           <Link href="/" className="flex items-center gap-3">
@@ -113,7 +70,6 @@ export default async function Page({
       </header>
 
       <main className="mx-auto max-w-4xl px-6 py-12">
-        {/* Lottery info */}
         <div className="mb-10 flex flex-col gap-6 sm:flex-row sm:items-center">
           {item.image_url && (
             <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-2xl border border-white/10">
@@ -139,60 +95,7 @@ export default async function Page({
           </div>
         </div>
 
-        {/* Table */}
-        {rows.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-white/10 py-24 text-center">
-            <p className="text-white/30">Одоогоор тасалбар аваагүй байна</p>
-          </div>
-        ) : (
-          <div className="overflow-hidden rounded-2xl border border-white/[0.06]">
-            {/* Table header */}
-            <div className="grid grid-cols-[56px_150px_1fr_140px] border-b border-white/[0.06] bg-white/[0.03] px-5 py-3 text-xs font-semibold uppercase tracking-wider text-white/30">
-              <span>#</span>
-              <span>Огноо</span>
-              <span>Сугалааны нэр</span>
-              <span>Утасны дугаар</span>
-            </div>
-
-            {/* Rows */}
-            <div className="divide-y divide-white/[0.03]">
-              {rows.map((row) => {
-                const color = colorForPhone(row.phone);
-                return (
-                  <div
-                    key={`${row.purchaseId}-${row.ticketNumber}`}
-                    className="grid grid-cols-[56px_150px_1fr_140px] items-center px-5 py-3 text-sm"
-                    style={{ backgroundColor: color.bg }}
-                  >
-                    <span
-                      className="font-mono font-bold tabular-nums"
-                      style={{ color: color.accent }}
-                    >
-                      {row.ticketNumber}
-                    </span>
-                    <span className="text-xs" style={{ color: color.accent }}>
-                      {formatDate(row.txnDate)}
-                    </span>
-                    <span className="truncate pr-4" style={{ color: color.text }}>
-                      {row.lotteryName}
-                    </span>
-                    <span
-                      className="font-mono tracking-wide"
-                      style={{ color: color.text }}
-                    >
-                      {row.phone}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Footer summary */}
-            <div className="border-t border-white/[0.06] bg-white/[0.02] px-5 py-3 text-xs text-white/25">
-              Нийт {rows.length} тасалбар бүртгэгдсэн
-            </div>
-          </div>
-        )}
+        <TicketEntriesTable rows={rows} totalTickets={item.total_tickets} />
       </main>
     </div>
   );

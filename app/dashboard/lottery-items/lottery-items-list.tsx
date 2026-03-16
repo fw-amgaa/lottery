@@ -154,13 +154,13 @@ export default function LotteryItemsList({ items }: { items: LotteryItem[] }) {
             key={item.id}
             className={`relative w-full max-w-sm overflow-hidden pt-0 mx-auto ${item.archived ? "opacity-70" : ""}`}
           >
-            <div className="w-full h-[200px] relative">
+            <Link href={`/dashboard/lottery-items/${item.id}`} className="block w-full h-[200px] relative">
               {item.image_url && (
                 <Image
                   src={item.image_url}
                   alt={item.name}
                   fill
-                  className="z-20 object-cover"
+                  className="z-20 object-cover transition-opacity hover:opacity-80"
                 />
               )}
               {item.archived && (
@@ -170,7 +170,7 @@ export default function LotteryItemsList({ items }: { items: LotteryItem[] }) {
                   </Badge>
                 </div>
               )}
-            </div>
+            </Link>
 
             <CardHeader>
               <div className="flex items-center justify-between gap-2">
