@@ -1,20 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { pool } from "@/lib/db";
-
-async function sendSms(to: string, message: string): Promise<void> {
-  const url = process.env.BANK_FETCHER_URL;
-  const secret = process.env.CALLBACK_SECRET;
-  if (!url || !secret) return;
-  try {
-    await fetch(`${url}/sms`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "x-api-key": secret },
-      body: JSON.stringify({ to, message }),
-    });
-  } catch (err) {
-    console.error("[sms] Failed to send:", err);
-  }
-}
+import { sendSms } from "@/lib/sms";
 
 interface RawTransaction {
   JrNo: string;

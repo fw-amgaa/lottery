@@ -3,23 +3,7 @@
 import { pool } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import type { BankTransactionWithLottery } from "@/lib/bank-transactions";
-
-async function sendSms(to: string, message: string): Promise<void> {
-  const url = process.env.BANK_FETCHER_URL;
-  const secret = process.env.CALLBACK_SECRET;
-  if (!url || !secret) {
-    console.warn("[sms] BANK_FETCHER_URL or CALLBACK_SECRET not configured — SMS skipped");
-    return;
-  }
-  const res = await fetch(`${url}/sms`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "x-api-key": secret },
-    body: JSON.stringify({ to, message }),
-  });
-  if (!res.ok) {
-    console.error("[sms] Failed:", res.status, await res.text());
-  }
-}
+import { sendSms } from "@/lib/sms";
 
 export async function getBankTransactions(): Promise<BankTransactionWithLottery[]> {
   const result = await pool.query(`

@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+
+const FACEBOOK_FALLBACK = "https://www.facebook.com/profile.php?id=61574923694972";
 import { getLotteryItems } from "./dashboard/lottery-items/actions";
 import {
   Progress,
@@ -107,16 +109,16 @@ export default async function Page() {
         </div>
 
         {/* payment info */}
-        <div className="mb-10 rounded-2xl border border-white/[0.06] bg-white/[0.02] px-6 py-5 flex flex-col sm:flex-row sm:items-center gap-4">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/[0.05]">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-white/60">
+        <div className="mb-10 rounded-2xl border border-amber-500/10 bg-amber-500/[0.06] px-6 py-5 flex flex-col sm:flex-row sm:items-center gap-4">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/10">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-amber-400">
               <rect x="2" y="5" width="20" height="14" rx="2" />
               <path d="M2 10h20" />
             </svg>
           </div>
           <div>
-            <p className="text-xs uppercase tracking-wider text-white/30 mb-1">Мөнгө шилжүүлэх данс — Төрийн банк</p>
-            <p className="font-mono text-lg font-semibold tracking-wider text-white/80">MN300034889696595988</p>
+            <p className="text-xs uppercase tracking-wider text-amber-400/60 mb-1">Мөнгө шилжүүлэх данс — Төрийн банк</p>
+            <p className="font-mono text-lg font-bold tracking-widest text-amber-300">MN300034889696595988</p>
           </div>
         </div>
 
@@ -196,40 +198,40 @@ export default async function Page() {
 
                     {/* links */}
                     <div className="flex gap-2">
-                      {item.facebook_url && (
-                        <a
-                          href={item.facebook_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2.5 text-xs font-medium text-white/50 transition hover:border-white/10 hover:text-white/80"
+                      <a
+                        href={item.facebook_url || FACEBOOK_FALLBACK}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2.5 text-xs font-medium text-white/50 transition hover:border-white/10 hover:text-white/80"
+                      >
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          className="h-3.5 w-3.5"
                         >
-                          <svg
-                            viewBox="0 0 24 24"
-                            fill="currentColor"
-                            className="h-3.5 w-3.5"
-                          >
-                            <path d="M9.198 21.5h4v-8.01h3.604l.396-3.98h-4V7.5a1 1 0 0 1 1-1h3v-4h-3a5 5 0 0 0-5 5v2.01h-2l-.396 3.98h2.396v8.01Z" />
-                          </svg>
-                          Facebook
-                        </a>
-                      )}
-                      {item.google_sheet_url && (
-                        <a
-                          href={item.google_sheet_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2.5 text-xs font-medium text-white/50 transition hover:border-white/10 hover:text-white/80"
+                          <path d="M9.198 21.5h4v-8.01h3.604l.396-3.98h-4V7.5a1 1 0 0 1 1-1h3v-4h-3a5 5 0 0 0-5 5v2.01h-2l-.396 3.98h2.396v8.01Z" />
+                        </svg>
+                        Facebook
+                      </a>
+                      <Link
+                        href={`/lottery-item/${item.id}`}
+                        className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-amber-500/20 bg-amber-500/[0.05] px-3 py-2.5 text-xs font-medium text-amber-400/70 transition hover:border-amber-500/40 hover:text-amber-400"
+                      >
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="h-3.5 w-3.5"
                         >
-                          <svg
-                            viewBox="0 0 24 24"
-                            fill="currentColor"
-                            className="h-3.5 w-3.5"
-                          >
-                            <path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Zm0 2v3H5V5h14ZM5 10h6v4H5v-4Zm8 0h6v4h-6v-4Zm-8 6h6v3H5v-3Zm8 3v-3h6v3h-6Z" />
-                          </svg>
-                          Хожлоо шалгах
-                        </a>
-                      )}
+                          <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" />
+                          <rect x="9" y="3" width="6" height="4" rx="1" />
+                          <path d="M9 12h6M9 16h4" />
+                        </svg>
+                        Хожлоо шалгах
+                      </Link>
                     </div>
                   </div>
                 </div>
