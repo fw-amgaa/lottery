@@ -137,10 +137,10 @@ export default async function DashboardPage() {
                 {flagged.map((txn: BankTransactionWithLottery) => (
                   <tr key={txn.id} className="border-t hover:bg-muted/30">
                     <td className="px-4 py-2 whitespace-nowrap text-muted-foreground">
-                      {new Date(txn.txn_date).toLocaleString("mn-MN", {
-                        timeZone: "Asia/Ulaanbaatar",
-                        hour12: false,
-                      })}
+                      {(() => {
+                        const d = new Date(new Date(txn.txn_date).toLocaleString("en-US", { timeZone: "Asia/Ulaanbaatar" }));
+                        return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,"0")}/${String(d.getDate()).padStart(2,"0")} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
+                      })()}
                     </td>
                     <td className="px-4 py-2 font-medium">
                       {Number(txn.amount).toLocaleString()}₮
@@ -208,10 +208,10 @@ export default async function DashboardPage() {
               {recent.map((p: RecentPurchase) => (
                 <tr key={p.id} className="border-t hover:bg-muted/30">
                   <td className="px-4 py-2 whitespace-nowrap text-muted-foreground">
-                    {new Date(p.txn_date).toLocaleString("mn-MN", {
-                      timeZone: "Asia/Ulaanbaatar",
-                      hour12: false,
-                    })}
+                    {(() => {
+                      const d = new Date(new Date(p.txn_date).toLocaleString("en-US", { timeZone: "Asia/Ulaanbaatar" }));
+                      return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,"0")}/${String(d.getDate()).padStart(2,"0")} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
+                    })()}
                   </td>
                   <td className="px-4 py-2">{p.lottery_name}</td>
                   <td className="px-4 py-2">{p.phone_number}</td>

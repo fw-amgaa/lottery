@@ -53,15 +53,13 @@ function excelArgbForPhone(phone: string): string {
 }
 
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleString("mn-MN", {
-    timeZone: "Asia/Ulaanbaatar",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
+  const d = new Date(new Date(iso).toLocaleString("en-US", { timeZone: "Asia/Ulaanbaatar" }));
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  const hh = String(d.getHours()).padStart(2, "0");
+  const min = String(d.getMinutes()).padStart(2, "0");
+  return `${yyyy}/${mm}/${dd} ${hh}:${min}`;
 }
 
 export default function TicketEntriesTable({ rows, totalTickets, showExport, exportFilename }: Props) {
