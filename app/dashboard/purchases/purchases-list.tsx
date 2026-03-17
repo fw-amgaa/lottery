@@ -7,7 +7,9 @@ import { Badge } from "@/components/ui/badge";
 const PAGE_SIZE = 20;
 
 function formatDate(date: Date | string) {
-  const d = new Date(new Date(date).toLocaleString("en-US", { timeZone: "Asia/Ulaanbaatar" }));
+  const d = new Date(
+    new Date(date).toLocaleString("en-US", { timeZone: "Asia/Ulaanbaatar" }),
+  );
   const yyyy = d.getFullYear();
   const mm = String(d.getMonth() + 1).padStart(2, "0");
   const dd = String(d.getDate()).padStart(2, "0");
@@ -26,7 +28,11 @@ interface Purchase {
   ticket_count: number;
 }
 
-export default function PurchasesList({ purchases }: { purchases: Purchase[] }) {
+export default function PurchasesList({
+  purchases,
+}: {
+  purchases: Purchase[];
+}) {
   const [page, setPage] = React.useState(1);
   const totalPages = Math.max(1, Math.ceil(purchases.length / PAGE_SIZE));
   const paginated = purchases.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -37,7 +43,7 @@ export default function PurchasesList({ purchases }: { purchases: Purchase[] }) 
         <table className="min-w-max w-full text-sm">
           <thead className="bg-muted/50">
             <tr>
-              <th className="text-left px-4 py-2 font-medium">Огноо (UTC+8)</th>
+              <th className="text-left px-4 py-2 font-medium">Огноо</th>
               <th className="text-left px-4 py-2 font-medium">Сугалаа</th>
               <th className="text-left px-4 py-2 font-medium">Код</th>
               <th className="text-left px-4 py-2 font-medium">Утас</th>
@@ -48,7 +54,12 @@ export default function PurchasesList({ purchases }: { purchases: Purchase[] }) 
           <tbody>
             {paginated.length === 0 && (
               <tr>
-                <td colSpan={6} className="text-center py-8 text-muted-foreground">Худалдан авалт байхгүй</td>
+                <td
+                  colSpan={6}
+                  className="text-center py-8 text-muted-foreground"
+                >
+                  Худалдан авалт байхгүй
+                </td>
               </tr>
             )}
             {paginated.map((p) => (
@@ -56,13 +67,23 @@ export default function PurchasesList({ purchases }: { purchases: Purchase[] }) 
                 <td className="px-4 py-2 whitespace-nowrap text-muted-foreground">
                   {formatDate(p.txn_date)}
                 </td>
-                <td className="px-4 py-2 whitespace-nowrap">{p.lottery_name}</td>
                 <td className="px-4 py-2 whitespace-nowrap">
-                  <Badge variant="outline" className="font-mono">{p.lottery_code}</Badge>
+                  {p.lottery_name}
                 </td>
-                <td className="px-4 py-2 whitespace-nowrap">{p.phone_number}</td>
-                <td className="px-4 py-2 font-medium whitespace-nowrap">{Number(p.amount).toLocaleString()}₮</td>
-                <td className="px-4 py-2 font-semibold whitespace-nowrap">{p.ticket_count}</td>
+                <td className="px-4 py-2 whitespace-nowrap">
+                  <Badge variant="outline" className="font-mono">
+                    {p.lottery_code}
+                  </Badge>
+                </td>
+                <td className="px-4 py-2 whitespace-nowrap">
+                  {p.phone_number}
+                </td>
+                <td className="px-4 py-2 font-medium whitespace-nowrap">
+                  {Number(p.amount).toLocaleString()}₮
+                </td>
+                <td className="px-4 py-2 font-semibold whitespace-nowrap">
+                  {p.ticket_count}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -71,12 +92,24 @@ export default function PurchasesList({ purchases }: { purchases: Purchase[] }) 
 
       {totalPages > 1 && (
         <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <span>{purchases.length} авалт · {page} / {totalPages} хуудас</span>
+          <span>
+            {purchases.length} авалт · {page} / {totalPages} хуудас
+          </span>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => setPage(p => p - 1)} disabled={page === 1}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage((p) => p - 1)}
+              disabled={page === 1}
+            >
               Өмнөх
             </Button>
-            <Button variant="outline" size="sm" onClick={() => setPage(p => p + 1)} disabled={page === totalPages}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage((p) => p + 1)}
+              disabled={page === totalPages}
+            >
               Дараах
             </Button>
           </div>

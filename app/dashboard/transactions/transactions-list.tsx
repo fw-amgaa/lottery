@@ -25,7 +25,9 @@ const STATUS_BADGE: Record<
 const PAGE_SIZE = 20;
 
 function formatDate(date: Date | string) {
-  const d = new Date(new Date(date).toLocaleString("en-US", { timeZone: "Asia/Ulaanbaatar" }));
+  const d = new Date(
+    new Date(date).toLocaleString("en-US", { timeZone: "Asia/Ulaanbaatar" }),
+  );
   const yyyy = d.getFullYear();
   const mm = String(d.getMonth() + 1).padStart(2, "0");
   const dd = String(d.getDate()).padStart(2, "0");
@@ -89,7 +91,7 @@ export default function TransactionsList({ transactions, lotteries }: Props) {
         <table className="min-w-max w-full text-sm">
           <thead className="bg-muted/50">
             <tr>
-              <th className="text-left px-4 py-2 font-medium">Огноо (UTC+8)</th>
+              <th className="text-left px-4 py-2 font-medium">Огноо</th>
               <th className="text-left px-4 py-2 font-medium">Дүн</th>
               <th className="text-left px-4 py-2 font-medium">Тайлбар</th>
               <th className="text-left px-4 py-2 font-medium">Утас</th>
