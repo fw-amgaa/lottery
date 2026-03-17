@@ -7,6 +7,7 @@ interface RawTransaction {
   JrItemNo: string;
   Amount: number;
   TxnDate: string;
+  SysDate: string;
   TxnDesc: string;
   ContAcntNo: string;
   ContAcntName: string;
@@ -139,7 +140,7 @@ export async function POST(req: NextRequest) {
              ON CONFLICT (jr_no, jr_item_no) DO NOTHING
              RETURNING id`,
             [lottery.id, phone, txn.Amount, ticketCount,
-             txn.JrNo, txn.JrItemNo, txn.TxnDate, txn.TxnDesc]
+             txn.JrNo, txn.JrItemNo, txn.SysDate, txn.TxnDesc]
           );
 
           if (pr.rows.length > 0) {
@@ -177,7 +178,7 @@ export async function POST(req: NextRequest) {
         txn.JrNo,
         txn.JrItemNo,
         txn.Amount,
-        txn.TxnDate,
+        txn.SysDate,
         txn.TxnDesc,
         txn.ContAcntNo,
         txn.ContAcntName,

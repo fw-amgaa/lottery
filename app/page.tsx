@@ -147,7 +147,7 @@ export default async function Page() {
                 Мөнгө шилжүүлэх данс — Төрийн банк
               </p>
               <p className="font-mono text-lg font-bold tracking-widest text-amber-300">
-                MN300034889696595988
+                MN300034 889696595988
               </p>
             </div>
             <CopyButton value="MN300034889696595988" />
@@ -301,7 +301,7 @@ export default async function Page() {
               {
                 step: "01",
                 title: "Тасалбар авах",
-                desc: "Төрийн банкны MN300034889696595988 дансруу тасалбарын үнийн дүнг шилжүүлнэ үү. Гүйлгээний утганд «КОД-УТАСНЫДУГААР» форматаар бичнэ үү. Жишээ: SHBY-99887766",
+                desc: "Төрийн банкны MN300034 889696595988 дансруу тасалбарын үнийн дүнг шилжүүлнэ үү. Гүйлгээний утганд «КОД-УТАСНЫДУГААР» форматаар бичнэ үү. Жишээ: SHBY-99887766",
               },
               {
                 step: "02",
@@ -408,7 +408,7 @@ export default async function Page() {
               <p className="text-sm leading-relaxed text-white/40">
                 Сугалаанд оролцохын тулд Төрийн банкны{" "}
                 <span className="font-mono text-white/50">
-                  MN300034889696595988
+                  MN300034 889696595988
                 </span>{" "}
                 дансруу тасалбарын үнийн дүнг шилжүүлж, гүйлгээний утганд{" "}
                 <span className="font-mono text-white/50">
