@@ -69,36 +69,45 @@ export async function resolveUnmatched(
   const ticketCount = Math.floor(txn.amount / lottery.price);
   if (ticketCount < 1) throw new Error("Amount too low for selected lottery");
 
+  // Insert purchase; if already exists (conflict), update bank_transaction_id so we get the id back
   const pr = await pool.query(
     `INSERT INTO purchases
        (lottery_item_id, phone_number, amount, ticket_count, jr_no, jr_item_no, txn_date, txn_desc, bank_transaction_id)
      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
-     ON CONFLICT (jr_no, jr_item_no) DO NOTHING
-     RETURNING id`,
+     ON CONFLICT (jr_no, jr_item_no) DO UPDATE
+       SET bank_transaction_id = EXCLUDED.bank_transaction_id
+     RETURNING id, (xmax = 0) AS inserted`,
     [lotteryItemId, phone, txn.amount, ticketCount,
      txn.jr_no, txn.jr_item_no, txn.txn_date, txn.txn_desc, txnId]
   );
 
-  if (pr.rows.length > 0) {
+  const purchaseId = pr.rows[0].id;
+  const isNewPurchase = pr.rows[0].inserted;
+
+  // Only increment sold_tickets for a fresh insert (not a re-resolve of already-processed txn)
+  if (isNewPurchase) {
     await pool.query(
       "UPDATE lottery_items SET sold_tickets = sold_tickets + $1, updated_at = NOW() WHERE id = $2",
       [ticketCount, lotteryItemId]
     );
-    await pool.query(
-      `UPDATE bank_transactions SET
-         status = 'completed', purchase_id = $1, resolved_at = NOW(), resolution_note = $2,
-         parsed_phone = $3
-       WHERE id = $4`,
-      [pr.rows[0].id, note || null, phone, txnId]
-    );
-    await sendSms(
-      phone,
-      `Та "${lottery.name}" сугалаанд ${ticketCount} тасалбар амжилттай бүртгүүллээ! Азтай байгаарай!`
-    );
   }
+
+  // Always mark transaction completed and send SMS
+  await pool.query(
+    `UPDATE bank_transactions SET
+       status = 'completed', purchase_id = $1, resolved_at = NOW(), resolution_note = $2,
+       parsed_phone = $3
+     WHERE id = $4`,
+    [purchaseId, note || null, phone, txnId]
+  );
+  await sendSms(
+    phone,
+    `Та "${lottery.name}" сугалаанд ${ticketCount} тасалбар амжилттай бүртгүүллээ! Азтай байгаарай!`
+  );
 
   revalidatePath("/dashboard/transactions");
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/lottery-items");
+  revalidatePath(`/lottery-item/${lotteryItemId}`);
   return { ticketCount };
 }
