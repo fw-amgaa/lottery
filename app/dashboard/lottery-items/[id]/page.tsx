@@ -28,7 +28,7 @@ export default async function Page({
   );
 
   const rows: TicketRow[] = [];
-  let counter = 1;
+  let counter = 0;
   for (const p of purchasesResult.rows) {
     for (let i = 0; i < p.ticket_count; i++) {
       rows.push({
