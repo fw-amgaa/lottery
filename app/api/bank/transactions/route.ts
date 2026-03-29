@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
   }
 
   const codesResult = await pool.query(
-    "SELECT id, code, price, name, total_tickets, sold_tickets FROM lottery_items WHERE code IS NOT NULL"
+    "SELECT id, code, price, name, total_tickets, sold_tickets FROM lottery_items WHERE code IS NOT NULL",
   );
   const lotteries = codesResult.rows as {
     id: string;
@@ -91,12 +91,13 @@ export async function POST(req: NextRequest) {
     // Idempotency check
     const exists = await pool.query(
       "SELECT id FROM bank_transactions WHERE jr_no = $1 AND jr_item_no = $2",
-      [txn.JrNo, txn.JrItemNo]
+      [txn.JrNo, txn.JrItemNo],
     );
     if (exists.rows.length > 0) continue;
 
     const { code, phone, confidence } = parseTxnDesc(txn.TxnDesc, validCodes);
-    const lottery = code ? lotteries.find((l) => l.code === code) : null;
+    // const lottery = code ? lotteries.find((l) => l.code === code) : null;
+    const lottery = lotteries[0] ?? null;
 
     let status: string;
     let purchaseId: string | null = null;
@@ -115,7 +116,7 @@ export async function POST(req: NextRequest) {
         status = "insufficient";
         await sendSms(
           phone,
-          `Таны илгээсэн ${txn.Amount.toLocaleString()}₮ дүн "${lottery.name}" сугалааны нэг тасалбарын үнэ ${lottery.price.toLocaleString()}₮-с бага байна. Зөв дүнгээр дахин илгээнэ үү.`
+          `Таны илгээсэн ${txn.Amount.toLocaleString()}₮ дүн "${lottery.name}" сугалааны нэг тасалбарын үнэ ${lottery.price.toLocaleString()}₮-с бага байна. Зөв дүнгээр дахин илгээнэ үү.`,
         );
       } else {
         // Cap at remaining tickets if oversold
@@ -128,10 +129,14 @@ export async function POST(req: NextRequest) {
           status = "insufficient";
           await sendSms(
             phone,
-            `"${lottery.name}" сугалааны тасалбар дууссан байна. Буцаан олголтын талаар бидэнтэй холбоо барина уу.`
+            `"${lottery.name}" сугалааны тасалбар дууссан байна. Буцаан олголтын талаар бидэнтэй холбоо барина уу.`,
           );
         } else {
-          status = isOversold ? "oversold" : hasRemainder ? "warning" : "completed";
+          status = isOversold
+            ? "oversold"
+            : hasRemainder
+              ? "warning"
+              : "completed";
 
           const pr = await pool.query(
             `INSERT INTO purchases
@@ -139,27 +144,36 @@ export async function POST(req: NextRequest) {
              VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
              ON CONFLICT (jr_no, jr_item_no) DO NOTHING
              RETURNING id`,
-            [lottery.id, phone, txn.Amount, ticketCount,
-             txn.JrNo, txn.JrItemNo, txn.SysDate + "+08:00", txn.TxnDesc]
+            [
+              lottery.id,
+              phone,
+              txn.Amount,
+              ticketCount,
+              txn.JrNo,
+              txn.JrItemNo,
+              txn.SysDate + "+08:00",
+              txn.TxnDesc,
+            ],
           );
 
           if (pr.rows.length > 0) {
             purchaseId = pr.rows[0].id;
             await pool.query(
               "UPDATE lottery_items SET sold_tickets = sold_tickets + $1, updated_at = NOW() WHERE id = $2",
-              [ticketCount, lottery.id]
+              [ticketCount, lottery.id],
             );
 
             if (isOversold) {
-              const extraAmount = (requested - remaining) * lottery.price + remainder;
+              const extraAmount =
+                (requested - remaining) * lottery.price + remainder;
               await sendSms(
                 phone,
-                `Та "${lottery.name}" сугалаанд ${ticketCount} тасалбар авлаа. Илүү илгээсэн ${extraAmount.toLocaleString()}₮-ийг буцаан олгох талаар удахгүй холбоо барих болно.`
+                `Та "${lottery.name}" сугалаанд ${ticketCount} тасалбар авлаа. Илүү илгээсэн ${extraAmount.toLocaleString()}₮-ийг буцаан олгох талаар удахгүй холбоо барих болно.`,
               );
             } else {
               await sendSms(
                 phone,
-                `Та "${lottery.name}" сугалаанд ${ticketCount} тасалбар амжилттай бүртгүүллээ! Азтай байгаарай!`
+                `Та "${lottery.name}" сугалаанд ${ticketCount} тасалбар амжилттай бүртгүүллээ! Азтай байгаарай!`,
               );
             }
           }
@@ -187,13 +201,13 @@ export async function POST(req: NextRequest) {
         confidence,
         status,
         purchaseId,
-      ]
+      ],
     );
 
     if (txnRow.rows.length > 0 && purchaseId) {
       await pool.query(
         "UPDATE purchases SET bank_transaction_id = $1 WHERE id = $2",
-        [txnRow.rows[0].id, purchaseId]
+        [txnRow.rows[0].id, purchaseId],
       );
     }
 
