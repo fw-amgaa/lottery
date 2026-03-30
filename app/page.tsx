@@ -221,7 +221,7 @@ export default async function Page() {
                     </div>
 
                     {/* code / archived state */}
-                    {item.archived ? (
+                    {/* {item.archived ? (
                       <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3 flex items-center gap-2.5">
                         <span className="h-2 w-2 rounded-full bg-white/20" />
                         <span className="text-sm font-medium text-white/35">
@@ -237,7 +237,7 @@ export default async function Page() {
                           {item.code ?? "—"}
                         </p>
                       </div>
-                    )}
+                    )} */}
 
                     {/* links */}
                     <div className="flex gap-2">
