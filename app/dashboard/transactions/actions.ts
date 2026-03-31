@@ -60,7 +60,7 @@ export async function resolveUnmatched(
   const txn = txnResult.rows[0];
 
   const lotteryResult = await pool.query(
-    "SELECT id, price, name FROM lottery_items WHERE id = $1",
+    "SELECT id, price, name, total_tickets, sold_tickets FROM lottery_items WHERE id = $1",
     [lotteryItemId]
   );
   if (lotteryResult.rows.length === 0) throw new Error("Lottery not found");
@@ -84,6 +84,8 @@ export async function resolveUnmatched(
   const purchaseId = pr.rows[0].id;
   const isNewPurchase = pr.rows[0].inserted;
 
+  const startTicket = isNewPurchase ? lottery.sold_tickets : lottery.sold_tickets - ticketCount;
+
   // Only increment sold_tickets for a fresh insert (not a re-resolve of already-processed txn)
   if (isNewPurchase) {
     await pool.query(
@@ -91,6 +93,12 @@ export async function resolveUnmatched(
       [ticketCount, lotteryItemId]
     );
   }
+
+  const pad = String(lottery.total_tickets).length;
+  const fmt = (n: number) => String(n).padStart(pad, "0");
+  const ticketNums = ticketCount === 1
+    ? fmt(startTicket)
+    : `${fmt(startTicket)}-${fmt(startTicket + ticketCount - 1)}`;
 
   // Always mark transaction completed and send SMS
   await pool.query(
@@ -102,7 +110,7 @@ export async function resolveUnmatched(
   );
   await sendSms(
     phone,
-    `Та "${lottery.name}" сугалаанд ${ticketCount} тасалбар амжилттай бүртгүүллээ! Азтай байгаарай!`
+    `Та "${lottery.name}" сугалаанд ${ticketCount} тасалбар амжилттай худалдан авлаа.\nТаны сугалааны дугаар ${ticketNums}\nТанд амжилт хүсье!`
   );
 
   revalidatePath("/dashboard/transactions");

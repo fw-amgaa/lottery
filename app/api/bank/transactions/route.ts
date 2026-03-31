@@ -158,24 +158,23 @@ export async function POST(req: NextRequest) {
 
           if (pr.rows.length > 0) {
             purchaseId = pr.rows[0].id;
+            const startTicket = lottery.sold_tickets;
+            lottery.sold_tickets += ticketCount;
             await pool.query(
               "UPDATE lottery_items SET sold_tickets = sold_tickets + $1, updated_at = NOW() WHERE id = $2",
               [ticketCount, lottery.id],
             );
 
-            if (isOversold) {
-              const extraAmount =
-                (requested - remaining) * lottery.price + remainder;
-              await sendSms(
-                phone,
-                `Та "${lottery.name}" сугалаанд ${ticketCount} тасалбар авлаа. Илүү илгээсэн ${extraAmount.toLocaleString()}₮-ийг буцаан олгох талаар удахгүй холбоо барих болно.`,
-              );
-            } else {
-              await sendSms(
-                phone,
-                `Та "${lottery.name}" сугалаанд ${ticketCount} тасалбар амжилттай бүртгүүллээ! Азтай байгаарай!`,
-              );
-            }
+            const pad = String(lottery.total_tickets).length;
+            const fmt = (n: number) => String(n).padStart(pad, "0");
+            const ticketNums = ticketCount === 1
+              ? fmt(startTicket)
+              : `${fmt(startTicket)}-${fmt(startTicket + ticketCount - 1)}`;
+
+            await sendSms(
+              phone,
+              `Та "${lottery.name}" сугалаанд ${ticketCount} тасалбар амжилттай худалдан авлаа.\nТаны сугалааны дугаар ${ticketNums}\nТанд амжилт хүсье!`,
+            );
           }
         }
       }
