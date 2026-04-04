@@ -34,6 +34,18 @@ export async function getFlaggedTransactions(): Promise<BankTransactionWithLotte
   return result.rows;
 }
 
+export async function ignoreTransaction(
+  txnId: string,
+  note: string
+): Promise<void> {
+  await pool.query(
+    `UPDATE bank_transactions SET resolved_at = NOW(), resolution_note = $1, status = 'ignored' WHERE id = $2`,
+    [note || null, txnId]
+  );
+  revalidatePath("/dashboard/transactions");
+  revalidatePath("/dashboard");
+}
+
 export async function resolveWarning(
   txnId: string,
   note: string

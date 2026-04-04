@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/select";
 import type { BankTransactionWithLottery } from "@/lib/bank-transactions";
 import type { LotteryItem } from "@/lib/lottery-items";
-import { resolveWarning, resolveUnmatched } from "./actions";
+import { resolveWarning, resolveUnmatched, ignoreTransaction } from "./actions";
 import { toast } from "sonner";
 
 interface Props {
@@ -137,6 +137,25 @@ export default function ResolveDialog({ txn, lotteries, onClose }: Props) {
           <Field orientation="horizontal">
             <Button onClick={handleSubmit} disabled={loading}>
               {loading ? "Хадгалж байна..." : isWarning ? "Баталгаажуулах" : "Шийдвэрлэх"}
+            </Button>
+            <Button
+              variant="outline"
+              disabled={loading}
+              onClick={async () => {
+                if (!txn) return;
+                setLoading(true);
+                try {
+                  await ignoreTransaction(txn.id, note);
+                  toast.success("Гүйлгээ орхигдлоо");
+                  onClose();
+                } catch (err) {
+                  toast.error(String(err));
+                } finally {
+                  setLoading(false);
+                }
+              }}
+            >
+              Орхих
             </Button>
             <Button variant="outline" onClick={onClose} disabled={loading}>
               Цуцлах
