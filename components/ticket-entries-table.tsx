@@ -65,12 +65,16 @@ function formatDate(iso: string) {
 export default function TicketEntriesTable({ rows, totalTickets, showExport, exportFilename }: Props) {
   const [page, setPage] = React.useState(1);
   const [exporting, setExporting] = React.useState(false);
+  const [phoneFilter, setPhoneFilter] = React.useState("");
 
   const padWidth = String(totalTickets).length;
   const pad = (n: number) => String(n).padStart(padWidth, "0");
 
-  const totalPages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
-  const pageRows = rows.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const filtered = phoneFilter
+    ? rows.filter((r) => r.phone.includes(phoneFilter))
+    : rows;
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const pageRows = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   async function handleExport() {
     setExporting(true);
@@ -131,13 +135,24 @@ export default function TicketEntriesTable({ rows, totalTickets, showExport, exp
 
   return (
     <div className="flex flex-col gap-4">
-      {showExport && (
-        <div className="flex justify-end">
+      <div className="flex items-center justify-between gap-3">
+        <input
+          type="text"
+          inputMode="numeric"
+          placeholder="Утасны дугаараар шүүх..."
+          value={phoneFilter}
+          onChange={(e) => {
+            setPhoneFilter(e.target.value);
+            setPage(1);
+          }}
+          className="w-56 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2 text-sm text-white placeholder:text-white/25 outline-none focus:border-white/20"
+        />
+        {showExport && (
           <Button variant="outline" size="sm" onClick={handleExport} disabled={exporting}>
             {exporting ? "Экспорт хийж байна..." : "Excel татах"}
           </Button>
-        </div>
-      )}
+        )}
+      </div>
 
       <div className="overflow-hidden rounded-2xl border border-white/[0.06]">
         {/* Header */}
@@ -177,7 +192,11 @@ export default function TicketEntriesTable({ rows, totalTickets, showExport, exp
 
         {/* Footer */}
         <div className="border-t border-white/[0.06] bg-white/[0.02] px-5 py-3 flex items-center justify-between text-xs text-white/25">
-          <span>Нийт {rows.length} тасалбар</span>
+          <span>
+            {phoneFilter
+              ? `${filtered.length} / ${rows.length} тасалбар`
+              : `Нийт ${rows.length} тасалбар`}
+          </span>
           {totalPages > 1 && (
             <div className="flex items-center gap-3">
               <button
